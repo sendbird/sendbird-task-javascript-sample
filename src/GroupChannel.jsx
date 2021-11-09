@@ -36,12 +36,9 @@ function GroupChannel({ sdk, userId }) {
   const handleSendUserMessage = (text) => {
     const userMessageParams = new sdk.UserMessageParams();
     var jsonMessageData = {
-      key: "VOTING_APP",
-      value: {
-        title: `${text}`,
-        description: "More info on where to get tasty bites",
-        options: [],
-      },
+      type: "VOTING_APP",
+      title: `${text}`,
+      description: "Need options on where to get good food",
     };
     var jsonString = JSON.stringify(jsonMessageData);
     userMessageParams.data = jsonString;
@@ -53,29 +50,44 @@ function GroupChannel({ sdk, userId }) {
     var channelHandler = new sdk.ChannelHandler();
     channelHandler.onMessageReceived = (channel, message) => {
       console.log("onMessageReceived", message);
+      var channelParams = new sdk.GroupChannelParams();
+      var messageId = message.messageId;
+      var newChannelData = {};
+      newChannelData[`${messageId}`] = {
+        voting_app_options: [],
+      };
+      var newChannelDataString = JSON.stringify(newChannelData);
+      channelParams.data = newChannelDataString;
+      channel.updateChannel(channelParams, (err, channel) => {
+        var parsedChannelData = JSON.parse(channelParams.data);
+        console.log("updatedChannelParamsData new=", parsedChannelData);
+      });
     };
 
     channelHandler.onMessageUpdated = (channel, message) => {
-      console.log("in onMessageUpdated", message);
-      var data = JSON.parse(message.data);
+      var messageData = JSON.parse(message.data);
+      var messageId = message.messageId;
       var newOption = {
         title: message.message,
-        description: "description inputted",
-        voters: [1],
+        voters: [messageId],
         created_by: message._sender.nickname,
       };
-      data.value.options.push(newOption);
-      var valueString = JSON.stringify(data);
-      const params = new sdk.UserMessageParams();
-      params.data = valueString;
-      var messageId = message.messageId;
-      channel.updateUserMessage(messageId, params, function (message, error) {
-        if (error) {
-          // Handle error.
+      var channelParams = new sdk.GroupChannelParams();
+      if (
+        messageData.hasOwnProperty("type") &&
+        messageData["type"] === "VOTING_APP"
+      ) {
+        var parsedChannelData = JSON.parse(channel.data);
+        if (parsedChannelData.hasOwnProperty(`${messageId}`)) {
+          parsedChannelData[`${messageId}`].voting_app_options.push(newOption);
+          var channelDataString = JSON.stringify(parsedChannelData);
+          channelParams.data = channelDataString;
+          channel.updateChannel(channelParams, (err, channel) => {
+            var parsedChannelData = JSON.parse(channelParams.data);
+            console.log("updatedChannelParamsData set=", parsedChannelData);
+          });
         }
-        var parsedMsgData = JSON.parse(message.data)
-        console.log("updateUserMessage; parsed msg.data=", parsedMsgData);
-      });
+      }
     };
 
     sdk.addChannelHandler("abc12334", channelHandler);
