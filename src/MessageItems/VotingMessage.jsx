@@ -8,7 +8,7 @@ import {
   TextField,
 } from "@material-ui/core";
 import "./index.css";
-import QuestionForm from '../QuestionForm';
+import QuestionForm from "../QuestionForm";
 
 export default function VotingMessage(props) {
   // props
@@ -47,39 +47,22 @@ export default function VotingMessage(props) {
   const [value, setValue] = useState("");
 
   const handleOptionsSubmit = (e) => {
-    console.log("value", value);
-    //e.preventDefault();
-    //on submit of options, update options in channels data & render Option to screen & create button for option to vote
-
-    var channelHandler = new sdk.ChannelHandler();
-    channelHandler.onMessageUpdated = (channel, message) => {
-      // var messageData = JSON.parse(message.data);
-      var messageId = message.messageId;
-      var newOption = {
-        title: message.message,
-        voters: [messageId],
-        created_by: message._sender.nickname,
-      };
-      var channelParams = new sdk.GroupChannelParams();
-      if (
-        message.customType === "VOTING_APP"
-        // messageData.hasOwnProperty("type") &&
-        // messageData["type"] === "VOTING_APP"
-      ) {
-        var parsedChannelData = JSON.parse(channel.data);
-
-        //if currentChannel[messageID]
-        if (parsedChannelData.hasOwnProperty(`${messageId}`)) {
-          parsedChannelData[`${messageId}`].voting_app_options.push(newOption);
-          var channelDataString = JSON.stringify(parsedChannelData);
-          channelParams.data = channelDataString;
-          channel.updateChannel(channelParams, (err, channel) => {
-            var parsedChannelData = JSON.parse(channelParams.data);
-            console.log("updatedChannelParamsData set=", parsedChannelData);
-          });
-        }
-      }
+    // e.preventDefault();
+    var messageId = message.messageId;
+    var newOption = {
+      title: value,
+      voters: [message.messageId],
+      created_by: message._sender.nickname,
     };
+    var channelParams = new sdk.GroupChannelParams();
+    var parsedChannelData = JSON.parse(currentChannel.data);
+    parsedChannelData[`${messageId}`].voting_app_options.push(newOption);
+    var channelDataString = JSON.stringify(parsedChannelData);
+    channelParams.data = channelDataString;
+    currentChannel.updateChannel(channelParams, (err, channel) => {
+      var parsedChannelData = JSON.parse(channelParams.data);
+      console.log("updatedChannelParamsData set=", parsedChannelData);
+    });
   };
 
   return (

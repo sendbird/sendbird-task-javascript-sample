@@ -6,7 +6,7 @@ export default function QuestionForm(props) {
   const [value, setValue] = useState(messageText);
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    // e.preventDefault();
     const userMessageParams = new sdk.UserMessageParams();
     var jsonMessageData = {
       type: "VOTING_APP",
@@ -43,11 +43,11 @@ export default function QuestionForm(props) {
       console.log("updatedChannelParamsData new=", parsedChannelData);
     });
   };
-console.log(currentChannel)
 
   const handleChange = (e) => {
     setValue(e.target.value);
   };
+
   return (
     <div>
       <form onSubmit={handleSubmit}>

@@ -19,8 +19,7 @@ export default function UserMessage(props) {
     onDeleteMessage,
     onUpdateMessage,
     sdk,
-    currentChannel,
-    updateMessageParams,
+    currentChannel
   } = props;
 
   // useState
@@ -76,15 +75,6 @@ export default function UserMessage(props) {
 
           {showForm && (
             <div className="user-message__text-area">
-              {/* <TextField
-                multiline
-                variant="filled"
-                rowsMax={4}
-                value={messageText}
-                onChange={(event) => {
-                  changeMessageText(event.target.value);
-                }}
-              /> */}
               <QuestionForm 
               sdk={sdk}
               currentChannel={currentChannel}
@@ -160,8 +150,6 @@ export default function UserMessage(props) {
                       onClick={() =>
                         onUpdateMessage(message.messageId, messageText)
                       }
-                      // onClick={() => handleSubmit(message, messageText)}
-                      // onClick={() => updateMessageParams(message, messageText) }
                     >
                       <span className="dropdown__menu-item-text">Save</span>
                     </li>

@@ -44,6 +44,7 @@ export default function CustomizedMessageItem(props) {
         onDeleteMessage={onDeleteMessage}
         onUpdateMessage={onUpdateMessage}
         sdk={sdk}
+        currentChannel={currentChannel}
       />
       )
     }

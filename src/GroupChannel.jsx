@@ -77,7 +77,7 @@ function GroupChannel({ sdk, userId }) {
 
   //   sdk.addChannelHandler("abc12334", channelHandler);
   // }
-
+  console.log('currentChannel',currentChannel)
   return (
     <div className="channel-wrap">
       <div className="channel-list">
