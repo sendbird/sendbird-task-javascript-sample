@@ -8,7 +8,7 @@ import {
   TextField,
 } from "@material-ui/core";
 import "./index.css";
-import QuestionForm from "../QuestionForm";
+import QuestionForm from '../QuestionForm';
 
 export default function VotingMessage(props) {
   // props
@@ -67,7 +67,8 @@ export default function VotingMessage(props) {
         // messageData["type"] === "VOTING_APP"
       ) {
         var parsedChannelData = JSON.parse(channel.data);
-        //if channel data has this messageID
+
+        //if currentChannel[messageID]
         if (parsedChannelData.hasOwnProperty(`${messageId}`)) {
           parsedChannelData[`${messageId}`].voting_app_options.push(newOption);
           var channelDataString = JSON.stringify(parsedChannelData);

@@ -1,17 +1,12 @@
 import React, { useState } from "react";
 
 export default function QuestionForm(props) {
-  const { sdk, currentChannel,renderQuestionForm } = props;
-  const [value, setValue] = useState("");
+  const { sdk, currentChannel, renderQuestionForm, message, messageText } =
+    props;
+  const [value, setValue] = useState(messageText);
 
   const handleSubmit = (e) => {
-    console.log("value", value);
-    //e.preventDefault();
-    //on submit,have it sent as a message type (so it has the message data fields)
-
-    //on add of option -> have them render to screen
-    //when option is added (have question hold the meta array key w/ this option)
-    //once an option is added, have the value hold a meta array with the option as a key
+    e.preventDefault();
     const userMessageParams = new sdk.UserMessageParams();
     var jsonMessageData = {
       type: "VOTING_APP",
@@ -20,10 +15,11 @@ export default function QuestionForm(props) {
     };
     var jsonString = JSON.stringify(jsonMessageData);
     userMessageParams.data = jsonString;
-    userMessageParams.customType="VOTING_APP";
+    userMessageParams.customType = "VOTING_APP";
     userMessageParams.message = value;
 
-    currentChannel.sendUserMessage(
+    currentChannel.updateUserMessage(
+      message.messageId,
       userMessageParams,
       function (userMessage, error) {
         if (error) {
@@ -33,7 +29,21 @@ export default function QuestionForm(props) {
         return userMessageParams;
       }
     );
+
+    var channelParams = new sdk.GroupChannelParams();
+    var messageId = message.messageId;
+    var newChannelData = {};
+    newChannelData[`${messageId}`] = {
+      voting_app_options: [],
+    };
+    var newChannelDataString = JSON.stringify(newChannelData);
+    channelParams.data = newChannelDataString;
+    currentChannel.updateChannel(channelParams, (err, channel) => {
+      var parsedChannelData = JSON.parse(channelParams.data);
+      console.log("updatedChannelParamsData new=", parsedChannelData);
+    });
   };
+console.log(currentChannel)
 
   const handleChange = (e) => {
     setValue(e.target.value);

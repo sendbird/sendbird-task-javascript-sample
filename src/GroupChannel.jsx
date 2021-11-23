@@ -9,7 +9,6 @@ import {
 import "./index.css";
 import "sendbird-uikit/dist/index.css";
 import CustomizedMessageItem from "./MessageItems/CustomizedMessageItem";
-import QuestionForm from "./QuestionForm";
 
 function GroupChannel({ sdk, userId }) {
   const [showSettings, setShowSettings] = useState(false);
@@ -90,14 +89,6 @@ function GroupChannel({ sdk, userId }) {
       </div>
       <div className="channel-chat">
         <button onClick={renderQuestionForm}>Suggest Task</button>
-        {showForm && (
-          <div>
-            <QuestionForm
-              sdk={sdk}
-              currentChannel={currentChannel}
-             />
-          </div>
-        )}
         <Channel
           channelUrl={currentChannelUrl}
           onChatHeaderActionClick={() => {

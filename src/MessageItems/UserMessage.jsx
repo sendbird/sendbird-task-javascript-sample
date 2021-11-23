@@ -37,50 +37,6 @@ export default function UserMessage(props) {
     setShowForm(!showForm);
   };
 
-  //doesn't update w/ new message but updates the params
-  const handleSubmit = (message, messageText) => {
-    try {
-      const userMessageParams = new sdk.UserMessageParams();
-      var jsonMessageData = {
-        type: "VOTING_APP",
-        title: `${message.message}`,
-        description: "Need options on where to get good food",
-      };
-      var jsonString = JSON.stringify(jsonMessageData);
-      userMessageParams.data = jsonString;
-      userMessageParams.customType = "VOTING_APP";
-      userMessageParams.message = message.message;
-
-      currentChannel.updateUserMessage(
-        message.messageId,
-        userMessageParams,
-        function (userMessage, error) {
-          if (error) {
-            console.log("sendUserMessage error", error);
-          }
-          console.log("userMsgParams=", userMessageParams);
-          return userMessageParams;
-        }
-      );
-
-      var channelParams = new sdk.GroupChannelParams();
-      var messageId = message.messageId;
-      var newChannelData = {};
-      newChannelData[`${messageId}`] = {
-        voting_app_options: [],
-      };
-      var newChannelDataString = JSON.stringify(newChannelData);
-      channelParams.data = newChannelDataString;
-      currentChannel.updateChannel(channelParams, (err, channel) => {
-        var parsedChannelData = JSON.parse(channelParams.data);
-        console.log("updatedChannelParamsData new=", parsedChannelData);
-      });
-    } finally {
-      onUpdateMessage(message.messageId, messageText);
-      console.log("updated msg=", message);
-    }
-  };
-
   return (
     <div className="user-message">
       <Card>
@@ -120,7 +76,7 @@ export default function UserMessage(props) {
 
           {showForm && (
             <div className="user-message__text-area">
-              <TextField
+              {/* <TextField
                 multiline
                 variant="filled"
                 rowsMax={4}
@@ -128,9 +84,17 @@ export default function UserMessage(props) {
                 onChange={(event) => {
                   changeMessageText(event.target.value);
                 }}
+              /> */}
+              <QuestionForm 
+              sdk={sdk}
+              currentChannel={currentChannel}
+              renderQuestionForm={renderQuestionForm}
+              message={message}
+              messageText={messageText}
               />
             </div>
           )}
+
         </CardContent>
         <button
           className="user-message__options-btn"
@@ -193,10 +157,10 @@ export default function UserMessage(props) {
                   {showForm && (
                     <li
                       className="dropdown__menu-item"
-                      // onClick={() =>
-                      //   onUpdateMessage(message.messageId, messageText, handleSubmit(message))
-                      // }
-                      onClick={() => handleSubmit(message, messageText)}
+                      onClick={() =>
+                        onUpdateMessage(message.messageId, messageText)
+                      }
+                      // onClick={() => handleSubmit(message, messageText)}
                       // onClick={() => updateMessageParams(message, messageText) }
                     >
                       <span className="dropdown__menu-item-text">Save</span>
