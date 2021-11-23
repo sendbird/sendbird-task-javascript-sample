@@ -10,9 +10,8 @@ import {
 import "./index.css";
 import QuestionForm from "../QuestionForm";
 
-export default function UserMessage(props) {
+export default function VotingMessage(props) {
   // props
-
   const {
     message,
     userId,
@@ -20,7 +19,6 @@ export default function UserMessage(props) {
     onUpdateMessage,
     sdk,
     currentChannel,
-    updateMessageParams,
   } = props;
 
   // useState
@@ -28,57 +26,59 @@ export default function UserMessage(props) {
   const [messageOptions, setMessageOptions] = useState(false);
   const [pressedUpdate, setPressedUpdate] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [showOptionsForm, setShowOptionsForm] = useState(false);
 
   const openDropdown = (e) => {
     setMessageOptions(!messageOptions);
+  };
+
+  const toggleOptionsForm = () => {
+    setShowOptionsForm(!showOptionsForm);
+  };
+
+  const handleChange = (e) => {
+    setValue(e.target.value);
   };
 
   const renderQuestionForm = () => {
     setShowForm(!showForm);
   };
 
-  //doesn't update w/ new message but updates the params
-  const handleSubmit = (message, messageText) => {
-    try {
-      const userMessageParams = new sdk.UserMessageParams();
-      var jsonMessageData = {
-        type: "VOTING_APP",
-        title: `${message.message}`,
-        description: "Need options on where to get good food",
-      };
-      var jsonString = JSON.stringify(jsonMessageData);
-      userMessageParams.data = jsonString;
-      userMessageParams.customType = "VOTING_APP";
-      userMessageParams.message = message.message;
+  const [value, setValue] = useState("");
 
-      currentChannel.updateUserMessage(
-        message.messageId,
-        userMessageParams,
-        function (userMessage, error) {
-          if (error) {
-            console.log("sendUserMessage error", error);
-          }
-          console.log("userMsgParams=", userMessageParams);
-          return userMessageParams;
-        }
-      );
+  const handleOptionsSubmit = (e) => {
+    console.log("value", value);
+    //e.preventDefault();
+    //on submit of options, update options in channels data & render Option to screen & create button for option to vote
 
-      var channelParams = new sdk.GroupChannelParams();
+    var channelHandler = new sdk.ChannelHandler();
+    channelHandler.onMessageUpdated = (channel, message) => {
+      // var messageData = JSON.parse(message.data);
       var messageId = message.messageId;
-      var newChannelData = {};
-      newChannelData[`${messageId}`] = {
-        voting_app_options: [],
+      var newOption = {
+        title: message.message,
+        voters: [messageId],
+        created_by: message._sender.nickname,
       };
-      var newChannelDataString = JSON.stringify(newChannelData);
-      channelParams.data = newChannelDataString;
-      currentChannel.updateChannel(channelParams, (err, channel) => {
-        var parsedChannelData = JSON.parse(channelParams.data);
-        console.log("updatedChannelParamsData new=", parsedChannelData);
-      });
-    } finally {
-      onUpdateMessage(message.messageId, messageText);
-      console.log("updated msg=", message);
-    }
+      var channelParams = new sdk.GroupChannelParams();
+      if (
+        message.customType === "VOTING_APP"
+        // messageData.hasOwnProperty("type") &&
+        // messageData["type"] === "VOTING_APP"
+      ) {
+        var parsedChannelData = JSON.parse(channel.data);
+        //if channel data has this messageID
+        if (parsedChannelData.hasOwnProperty(`${messageId}`)) {
+          parsedChannelData[`${messageId}`].voting_app_options.push(newOption);
+          var channelDataString = JSON.stringify(parsedChannelData);
+          channelParams.data = channelDataString;
+          channel.updateChannel(channelParams, (err, channel) => {
+            var parsedChannelData = JSON.parse(channelParams.data);
+            console.log("updatedChannelParamsData set=", parsedChannelData);
+          });
+        }
+      }
+    };
   };
 
   return (
@@ -94,31 +94,38 @@ export default function UserMessage(props) {
           }
           title={
             message.sender
-              ? message.sender.nickname || message.sender.userId
-              : "(No name)"
+              ? "Voting msg"
+              : //message.sender.nickname || message.sender.userId
+                "(No name)"
           }
         />
         <CardContent>
           {!pressedUpdate && (
             <Typography variant="body2" component="p">
               {message.message}
+              <button onClick={toggleOptionsForm}>Add Options</button>
+              {showOptionsForm && (
+                <div>
+                  <form onSubmit={handleOptionsSubmit}>
+                    <label htmlFor="question">Option</label>
+                    <br></br>
+                    <input
+                      type="text"
+                      id="option"
+                      name="option"
+                      value={value}
+                      onChange={handleChange}
+                    />
+                    <br></br>
+                    <input type="submit" value="Submit" />
+                    <button onClick={toggleOptionsForm}>Cancel</button>
+                  </form>
+                </div>
+              )}
+              {/* if theres options, display options here */}
             </Typography>
           )}
           {pressedUpdate && (
-            <div className="user-message__text-area">
-              <TextField
-                multiline
-                variant="filled"
-                rowsMax={4}
-                value={messageText}
-                onChange={(event) => {
-                  changeMessageText(event.target.value);
-                }}
-              />
-            </div>
-          )}
-
-          {showForm && (
             <div className="user-message__text-area">
               <TextField
                 multiline
@@ -160,16 +167,17 @@ export default function UserMessage(props) {
                       </span>
                     </li>
                   )}
-                  {pressedUpdate && !showForm && (
-                    <li
-                      className="dropdown__menu-item"
-                      onClick={() =>
-                        onUpdateMessage(message.messageId, messageText)
-                      }
-                    >
-                      <span className="dropdown__menu-item-text">Save</span>
-                    </li>
+
+                  {showForm && (
+                    <div>
+                      <QuestionForm
+                        sdk={sdk}
+                        currentChannel={currentChannel}
+                        renderQuestionForm={renderQuestionForm}
+                      />
+                    </div>
                   )}
+
                   {pressedUpdate && (
                     <li
                       className="dropdown__menu-item"
@@ -190,27 +198,17 @@ export default function UserMessage(props) {
                     </li>
                   )}
 
-                  {showForm && (
+                  {pressedUpdate && (
                     <li
                       className="dropdown__menu-item"
-                      // onClick={() =>
-                      //   onUpdateMessage(message.messageId, messageText, handleSubmit(message))
-                      // }
-                      onClick={() => handleSubmit(message, messageText)}
-                      // onClick={() => updateMessageParams(message, messageText) }
+                      onClick={() =>
+                        onUpdateMessage(message.messageId, messageText)
+                      }
                     >
                       <span className="dropdown__menu-item-text">Save</span>
                     </li>
                   )}
 
-                  {showForm && (
-                    <li
-                      className="dropdown__menu-item"
-                      onClick={() => setShowForm(false)}
-                    >
-                      <span className="dropdown__menu-item-text">Cancel</span>
-                    </li>
-                  )}
                   {!pressedUpdate && !showForm && (
                     <li
                       className="dropdown__menu-item"

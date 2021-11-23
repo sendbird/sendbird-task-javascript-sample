@@ -11,3 +11,19 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.user-message__options-btn {
+  height: 32px;
+  width: 32px;
+  border-radius: 25px;
+  border: 2px solid var(--sendbird-iconbutton-color);
+  float: right;
+  position: absolute;
+  display: inline-block;
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: white;
+}
