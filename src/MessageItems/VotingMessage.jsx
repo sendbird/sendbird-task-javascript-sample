@@ -69,7 +69,6 @@ export default function VotingMessage(props) {
     });
   };
 
-  console.log("currentChannel=", currentChannel);
   return (
     <div className="user-message">
       <Card>
