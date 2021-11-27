@@ -49,7 +49,7 @@ export default function UserMessage(props) {
     messagesInitialState
   );
 
-  updateChannelParams = () => {
+  const updateChannelParams = () => {
     var channelParams = new sdk.GroupChannelParams();
     var messageId = message.messageId;
     var newChannelData = {};
@@ -81,6 +81,12 @@ export default function UserMessage(props) {
 
   const sdkInit = sdk.initialized;
 
+  //https://github.com/sendbird/uikit-js/blob/8214485dee0b8a211261a629427e9f56ba867f50/src/lib/Sendbird.jsx
+  const [pubSub, setPubSub] = useState();
+  useEffect(() => {
+    setPubSub(pubSubFactory());
+  }, []);
+
   // handles API calls from withSendbird
   useEffect(() => {
     const subScriber = utils.pubSubHandler(
@@ -91,13 +97,7 @@ export default function UserMessage(props) {
     return () => {
       utils.pubSubHandleRemover(subScriber);
     };
-  }, [currentChannel.url, sdkInit]);
-
-  //https://github.com/sendbird/uikit-js/blob/8214485dee0b8a211261a629427e9f56ba867f50/src/lib/Sendbird.jsx
-  const [pubSub, setPubSub] = useState();
-  useEffect(() => {
-    setPubSub(pubSubFactory());
-  }, []);
+  }, [currentChannel.url, sdkInit, pubSub]);
 
   const { logLevel = "" } = config;
   const [logger, setLogger] = useState(LoggerFactory(logLevel));
