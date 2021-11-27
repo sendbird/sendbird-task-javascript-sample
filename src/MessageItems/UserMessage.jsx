@@ -52,12 +52,22 @@ export default function UserMessage(props) {
   const updateChannelParams = () => {
     var channelParams = new sdk.GroupChannelParams();
     var messageId = message.messageId;
-    var newChannelData = {};
-    newChannelData[`${messageId}`] = {
-      voting_app_options: [],
-    };
-    var newChannelDataString = JSON.stringify(newChannelData);
-    channelParams.data = newChannelDataString;
+    var channelDataString = "";
+    if (currentChannel.data) {
+      var parsedChannelData = JSON.parse(currentChannel.data);
+      parsedChannelData[`${messageId}`] = {
+        voting_app_options: [],
+      };
+      console.log("finished parsedChannelData", parsedChannelData);
+      channelDataString = JSON.stringify(parsedChannelData);
+    } else {
+      var newChannelData = {};
+      newChannelData[`${messageId}`] = {
+        voting_app_options: [],
+      };
+      channelDataString = JSON.stringify(newChannelData);
+    }
+    channelParams.data = channelDataString;
     currentChannel.updateChannel(channelParams, (err, channel) => {
       var parsedChannelData = JSON.parse(channelParams.data);
       console.log("updatedChannelParamsData new=", parsedChannelData);

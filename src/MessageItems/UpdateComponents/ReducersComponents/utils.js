@@ -1,5 +1,4 @@
 //https://github.com/sendbird/uikit-js/blob/develop/src/smart-components/Conversation/utils.js
-import format from "date-fns/format";
 import * as channelActions from "../actionTypes";
 import * as topics from "../topics";
 

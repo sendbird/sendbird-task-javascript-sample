@@ -28,7 +28,6 @@ export default function VotingMessage(props) {
   const [showForm, setShowForm] = useState(false);
   const [showOptionsForm, setShowOptionsForm] = useState(false);
 
-
   const openDropdown = (e) => {
     setMessageOptions(!messageOptions);
   };
@@ -55,13 +54,13 @@ export default function VotingMessage(props) {
       voters: [message.messageId],
       created_by: message._sender.nickname,
     };
-    var channelParams = new sdk.GroupChannelParams(); 
+    var channelParams = new sdk.GroupChannelParams();
     var parsedChannelData = JSON.parse(currentChannel.data);
-    var messageData =  parsedChannelData[messageId]
-    var votingOptions = messageData['voting_app_options']
+    var messageData = parsedChannelData[messageId];
+    var votingOptions = messageData["voting_app_options"];
     votingOptions.push(newOption);
 
-    console.log('new parsedChannelData=',parsedChannelData)
+    console.log("new parsedChannelData=", parsedChannelData);
     var channelDataString = JSON.stringify(parsedChannelData);
     channelParams.data = channelDataString;
     currentChannel.updateChannel(channelParams, (err, channel) => {
@@ -70,9 +69,7 @@ export default function VotingMessage(props) {
     });
   };
 
-  // if parsedChannelData[`${messageId}`].voting_app_options.length !==0 (has options)
-    //then, retrun each option in array
-console.log('currentChannel=', currentChannel)
+  console.log("currentChannel=", currentChannel);
   return (
     <div className="user-message">
       <Card>
@@ -98,7 +95,7 @@ console.log('currentChannel=', currentChannel)
               <button onClick={toggleOptionsForm}>Add Options</button>
               {showOptionsForm && (
                 <div>
-                  <form onSubmit={(e)=>handleOptionsSubmit(e)}>
+                  <form onSubmit={(e) => handleOptionsSubmit(e)}>
                     <label htmlFor="question">Option</label>
                     <br></br>
                     <input
@@ -114,8 +111,16 @@ console.log('currentChannel=', currentChannel)
                   </form>
                 </div>
               )}
-              {/* if theres options, display options here */}
-          
+              {/* { votingOptions &&
+                (votingOptions.map(function (option) {
+                  return (
+                    <div>
+                      <h3>{option.title}</h3>
+                      <button>Vote</button>
+                    </div>
+                  );
+                })
+                )} */}
             </Typography>
           )}
           {pressedUpdate && (
