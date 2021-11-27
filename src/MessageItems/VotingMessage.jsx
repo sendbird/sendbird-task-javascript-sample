@@ -65,6 +65,10 @@ export default function VotingMessage(props) {
     });
   };
 
+  //if currentChannel's data has options, show the options -> var parsedChannelData = JSON.parse(currentChannel.data);
+  //if messageId is in currentChannel.data &&  parsedChannelData[`${messageId}`].voting_app_options.length !==0 (has options)
+    //then, retrun each option in array
+
   return (
     <div className="user-message">
       <Card>

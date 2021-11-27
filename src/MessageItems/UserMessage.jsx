@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useReducer, useEffect, useRef } from "react";
 import {
   Card,
   CardHeader,
@@ -8,7 +8,14 @@ import {
   TextField,
 } from "@material-ui/core";
 import "./index.css";
-import QuestionForm from "../QuestionForm";
+// import QuestionForm from "../QuestionForm";
+import useUpdateMessageCallback from "./UpdateComponents/useUpdateMessageCallback";
+import messagesReducer from "./UpdateComponents/ReducersComponents/reducers";
+import messagesInitialState from "./UpdateComponents/ReducersComponents/initialState";
+import pubSubFactory from "./UpdateComponents/ReducersComponents/pubSubIndex";
+import { LoggerFactory } from "./UpdateComponents/logger";
+import * as utils from "./UpdateComponents/ReducersComponents/utils";
+import useHandleChannelEvents from "./UpdateComponents/useHandleChannelEvents";
 
 export default function UserMessage(props) {
   // props
@@ -19,7 +26,8 @@ export default function UserMessage(props) {
     onDeleteMessage,
     onUpdateMessage,
     sdk,
-    currentChannel
+    currentChannel,
+    config = {},
   } = props;
 
   // useState
@@ -35,6 +43,87 @@ export default function UserMessage(props) {
   const renderQuestionForm = () => {
     setShowForm(!showForm);
   };
+
+  const [messagesStore, messagesDispatcher] = useReducer(
+    messagesReducer,
+    messagesInitialState
+  );
+
+  updateChannelParams = () => {
+    var channelParams = new sdk.GroupChannelParams();
+    var messageId = message.messageId;
+    var newChannelData = {};
+    newChannelData[`${messageId}`] = {
+      voting_app_options: [],
+    };
+    var newChannelDataString = JSON.stringify(newChannelData);
+    channelParams.data = newChannelDataString;
+    currentChannel.updateChannel(channelParams, (err, channel) => {
+      var parsedChannelData = JSON.parse(channelParams.data);
+      console.log("updatedChannelParamsData new=", parsedChannelData);
+    });
+  };
+
+  const onBeforeUpdateUserMessage = (text) => {
+    updateChannelParams();
+    const userMessageParams = new sdk.UserMessageParams();
+    var jsonMessageData = {
+      type: "VOTING_APP",
+      title: `${text}`,
+      description: "Need options on where to get good food",
+    };
+    var jsonString = JSON.stringify(jsonMessageData);
+    userMessageParams.data = jsonString;
+    userMessageParams.customType = "VOTING_APP";
+    userMessageParams.message = text;
+    return userMessageParams;
+  };
+
+  const sdkInit = sdk.initialized;
+
+  // handles API calls from withSendbird
+  useEffect(() => {
+    const subScriber = utils.pubSubHandler(
+      currentChannel.url,
+      pubSub,
+      messagesDispatcher
+    );
+    return () => {
+      utils.pubSubHandleRemover(subScriber);
+    };
+  }, [currentChannel.url, sdkInit]);
+
+  //https://github.com/sendbird/uikit-js/blob/8214485dee0b8a211261a629427e9f56ba867f50/src/lib/Sendbird.jsx
+  const [pubSub, setPubSub] = useState();
+  useEffect(() => {
+    setPubSub(pubSubFactory());
+  }, []);
+
+  const { logLevel = "" } = config;
+  const [logger, setLogger] = useState(LoggerFactory(logLevel));
+  useEffect(() => {
+    setLogger(LoggerFactory(logLevel));
+  }, [logLevel]);
+
+  const scrollRef = useRef(null);
+  const { hasMoreToBottom } = messagesStore;
+
+  // Hook to handle ChannelEvents and send values to useReducer using messagesDispatcher
+  useHandleChannelEvents(
+    { currentChannel, sdkInit, hasMoreToBottom },
+    {
+      messagesDispatcher,
+      sdk,
+      logger,
+      scrollRef,
+    }
+  );
+
+  //calls what onUpdateMessage is equal to
+  const updateVotingMessage = useUpdateMessageCallback(
+    { currentChannel, messagesDispatcher, onBeforeUpdateUserMessage },
+    { logger, sdk, pubSub }
+  );
 
   return (
     <div className="user-message">
@@ -72,19 +161,19 @@ export default function UserMessage(props) {
               />
             </div>
           )}
-
           {showForm && (
             <div className="user-message__text-area">
-              <QuestionForm 
-              sdk={sdk}
-              currentChannel={currentChannel}
-              renderQuestionForm={renderQuestionForm}
-              message={message}
-              messageText={messageText}
+              <TextField
+                multiline
+                variant="filled"
+                rowsMax={4}
+                value={messageText}
+                onChange={(event) => {
+                  changeMessageText(event.target.value);
+                }}
               />
             </div>
           )}
-
         </CardContent>
         <button
           className="user-message__options-btn"
@@ -148,7 +237,7 @@ export default function UserMessage(props) {
                     <li
                       className="dropdown__menu-item"
                       onClick={() =>
-                        onUpdateMessage(message.messageId, messageText)
+                        updateVotingMessage(message.messageId, messageText)
                       }
                     >
                       <span className="dropdown__menu-item-text">Save</span>
