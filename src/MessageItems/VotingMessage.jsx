@@ -69,6 +69,19 @@ export default function VotingMessage(props) {
     });
   };
 
+  var votingOptions = false;
+  if (suggestionMessage) {
+    //options array is defined already b/c created onUpdate of message to be a voting message
+    var channelParsedData = JSON.parse(currentChannel.data);
+    var suggestionMessage = channelParsedData[message.messageId];
+    votingOptions = suggestionMessage['voting_app_options'].length == 0 ? false : suggestionMessage["voting_app_options"];
+
+    console.log("suggestionMessage", suggestionMessage);
+  }
+  console.log ('votingOptions', votingOptions)
+  
+  console.log("currentChannel=", currentChannel);
+  
   return (
     <div className="user-message">
       <Card>
