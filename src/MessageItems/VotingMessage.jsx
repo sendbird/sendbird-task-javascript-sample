@@ -27,7 +27,8 @@ export default function VotingMessage(props) {
   const [pressedUpdate, setPressedUpdate] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [showOptionsForm, setShowOptionsForm] = useState(false);
-
+  const [optionsValue, setOptionsValue] = useState('');
+ 
   const openDropdown = (e) => {
     setMessageOptions(!messageOptions);
   };
@@ -37,14 +38,16 @@ export default function VotingMessage(props) {
   };
 
   const handleChange = (e) => {
-    setValue(e.target.value);
+    setOptionsValue(e.target.value)
   };
 
   const renderQuestionForm = () => {
     setShowForm(!showForm);
   };
 
-  const [value, setValue] = useState("");
+ const deleteOption = (e) => {
+
+ }
 
   const handleVote = (e) => {
     var channelParsedData = JSON.parse(currentChannel.data);
@@ -72,11 +75,13 @@ export default function VotingMessage(props) {
   };
 
   const handleOptionsSubmit = (e) => {
-    // e.preventDefault();
+    e.preventDefault();   
+    setShowOptionsForm(false);
     var messageId = message.messageId;
+    var currentUserId = parseInt(userId);
     var newOption = {
-      title: value,
-      voters: [messageId],
+      title: optionsValue,
+      voters: [currentUserId],
       created_by: message._sender.nickname,
     };
     var channelParams = new sdk.GroupChannelParams();
@@ -90,6 +95,7 @@ export default function VotingMessage(props) {
       var parsedChannelData = JSON.parse(channelParams.data);
       console.log("updatedChannelParamsData set=", parsedChannelData);
     });
+    setOptionsValue('');
   };
 
   var channelParsedData = JSON.parse(currentChannel.data);
@@ -99,8 +105,7 @@ export default function VotingMessage(props) {
   // suggestionMessage.hasOwnProperty('voting_app_options')
 
   //going thru the channels params **
-
-  console.log("outside; channelData=", channelParsedData);
+  // console.log("outside; channelData=", channelParsedData);
   if (suggestionMessage) {
     // console.log('voting_app_options', suggestionMessage['voting_app_options'])
     //options array is defined already b/c created onUpdate of message to be a voting message
@@ -147,7 +152,7 @@ export default function VotingMessage(props) {
                       type="text"
                       id="option"
                       name="option"
-                      value={value}
+                      value={optionsValue}
                       onChange={handleChange}
                     />
                     <br></br>
@@ -164,6 +169,10 @@ export default function VotingMessage(props) {
                       {option.voters && <h4>{option.voters.length}</h4>}
                       <button onClick={handleVote} data-option={option.title}>
                         Vote
+                      </button>
+                      {/* if you're the creator, you can see the delete btn */}
+                      <button onClick={deleteOption} data-option={option.title}>
+                        Delete
                       </button>
                     </div>
                   );

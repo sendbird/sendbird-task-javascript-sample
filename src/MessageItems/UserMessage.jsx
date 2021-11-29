@@ -58,7 +58,6 @@ export default function UserMessage(props) {
       parsedChannelData[`${messageId}`] = {
         voting_app_options: [],
       };
-      console.log("finished parsedChannelData", parsedChannelData);
       channelDataString = JSON.stringify(parsedChannelData);
     } else {
       var newChannelData = {};
