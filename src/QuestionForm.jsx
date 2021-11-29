@@ -10,8 +10,7 @@ export default function QuestionForm(props) {
     const userMessageParams = new sdk.UserMessageParams();
     var jsonMessageData = {
       type: "VOTING_APP",
-      title: `${value}`,
-      description: "Need options on where to get good food",
+      title: `${value}`
     };
     var jsonString = JSON.stringify(jsonMessageData);
     userMessageParams.data = jsonString;

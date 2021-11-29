@@ -46,12 +46,37 @@ export default function VotingMessage(props) {
 
   const [value, setValue] = useState("");
 
+  const handleVote = (e) => {
+    var channelParsedData = JSON.parse(currentChannel.data);
+    var options = channelParsedData[message.messageId]["voting_app_options"];
+    var optionVotingFor = e.target.dataset.option;
+    var currentUserId = parseInt(userId);
+    var objIndex = options.findIndex(
+      (option) => option.title === optionVotingFor
+    );
+    if (options[objIndex].voters.includes(currentUserId)) {
+      var filteredOptions = options[objIndex].voters.filter(
+        (id) => id !== currentUserId
+      );
+      options[objIndex].voters = filteredOptions;
+    } else {
+      options[objIndex].voters.push(currentUserId);
+    }
+    var channelParams = new sdk.GroupChannelParams();
+    var channelDataString = JSON.stringify(channelParsedData);
+    channelParams.data = channelDataString;
+    currentChannel.updateChannel(channelParams, (err, channel) => {
+      var parsedChannelData = JSON.parse(channelParams.data);
+      console.log("updatedChannelParamsData new=", parsedChannelData);
+    });
+  };
+
   const handleOptionsSubmit = (e) => {
     // e.preventDefault();
     var messageId = message.messageId;
     var newOption = {
       title: value,
-      voters: [message.messageId],
+      voters: [messageId],
       created_by: message._sender.nickname,
     };
     var channelParams = new sdk.GroupChannelParams();
@@ -59,8 +84,6 @@ export default function VotingMessage(props) {
     var messageData = parsedChannelData[messageId];
     var votingOptions = messageData["voting_app_options"];
     votingOptions.push(newOption);
-
-    console.log("new parsedChannelData=", parsedChannelData);
     var channelDataString = JSON.stringify(parsedChannelData);
     channelParams.data = channelDataString;
     currentChannel.updateChannel(channelParams, (err, channel) => {
@@ -69,19 +92,25 @@ export default function VotingMessage(props) {
     });
   };
 
+  var channelParsedData = JSON.parse(currentChannel.data);
+  var suggestionMessage = channelParsedData[message.messageId];
   var votingOptions = false;
-  if (suggestionMessage) {
-    //options array is defined already b/c created onUpdate of message to be a voting message
-    var channelParsedData = JSON.parse(currentChannel.data);
-    var suggestionMessage = channelParsedData[message.messageId];
-    votingOptions = suggestionMessage['voting_app_options'].length == 0 ? false : suggestionMessage["voting_app_options"];
+  //suggestionMessage['voting_app_options'] !== undefined
+  // suggestionMessage.hasOwnProperty('voting_app_options')
 
-    console.log("suggestionMessage", suggestionMessage);
+  //going thru the channels params **
+
+  console.log("outside; channelData=", channelParsedData);
+  if (suggestionMessage) {
+    // console.log('voting_app_options', suggestionMessage['voting_app_options'])
+    //options array is defined already b/c created onUpdate of message to be a voting message
+
+    votingOptions =
+      suggestionMessage["voting_app_options"].length === 0
+        ? false
+        : suggestionMessage["voting_app_options"];
   }
-  console.log ('votingOptions', votingOptions)
-  
-  console.log("currentChannel=", currentChannel);
-  
+
   return (
     <div className="user-message">
       <Card>
@@ -95,20 +124,24 @@ export default function VotingMessage(props) {
           }
           title={
             message.sender
-              ? "Voting msg"
-              : //message.sender.nickname || message.sender.userId
-                "(No name)"
+              ? message.sender.nickname || message.sender.userId
+              : "(No name)"
           }
         />
         <CardContent>
           {!pressedUpdate && (
             <Typography variant="body2" component="p">
               {message.message}
-              <button onClick={toggleOptionsForm}>Add Options</button>
+              {!showOptionsForm && (
+                <button onClick={toggleOptionsForm} id="add-options-btn">
+                  Add Options
+                </button>
+              )}
+
               {showOptionsForm && (
                 <div>
                   <form onSubmit={(e) => handleOptionsSubmit(e)}>
-                    <label htmlFor="question">Option</label>
+                    <label htmlFor="question">Option:</label>
                     <br></br>
                     <input
                       type="text"
@@ -123,16 +156,18 @@ export default function VotingMessage(props) {
                   </form>
                 </div>
               )}
-              {/* { votingOptions &&
-                (votingOptions.map(function (option) {
+              {votingOptions &&
+                votingOptions.map(function (option) {
                   return (
                     <div>
                       <h3>{option.title}</h3>
-                      <button>Vote</button>
+                      {option.voters && <h4>{option.voters.length}</h4>}
+                      <button onClick={handleVote} data-option={option.title}>
+                        Vote
+                      </button>
                     </div>
                   );
-                })
-                )} */}
+                })}
             </Typography>
           )}
           {pressedUpdate && (

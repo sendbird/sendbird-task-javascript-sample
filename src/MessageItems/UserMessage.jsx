@@ -79,8 +79,7 @@ export default function UserMessage(props) {
     const userMessageParams = new sdk.UserMessageParams();
     var jsonMessageData = {
       type: "VOTING_APP",
-      title: `${text}`,
-      description: "Need options on where to get good food",
+      title: `${text}`
     };
     var jsonString = JSON.stringify(jsonMessageData);
     userMessageParams.data = jsonString;

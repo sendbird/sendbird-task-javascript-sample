@@ -9,9 +9,7 @@ export default function CustomizedMessageItem(props) {
   const { message, emojiContainer, onDeleteMessage, onUpdateMessage, userId, sdk, currentChannel } =
     props;
 
-  // console.log("message=", message);
   // var data = message.data ? true : false;
-  console.log("msg", message)
   const MessageHOC = useMemo(() => {
   
     // var messageData = JSON.parse(message.data);

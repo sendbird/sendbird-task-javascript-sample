@@ -63,7 +63,6 @@ export default function useUpdateMessageCallback(
       });
     },
     [
-      currentChannel.url,
       messagesDispatcher,
       onBeforeUpdateUserMessage,
       logger,
