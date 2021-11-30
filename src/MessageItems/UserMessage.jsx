@@ -8,7 +8,6 @@ import {
   TextField,
 } from "@material-ui/core";
 import "./index.css";
-// import QuestionForm from "../QuestionForm";
 import useUpdateMessageCallback from "./UpdateComponents/useUpdateMessageCallback";
 import messagesReducer from "./UpdateComponents/ReducersComponents/reducers";
 import messagesInitialState from "./UpdateComponents/ReducersComponents/initialState";
@@ -18,8 +17,6 @@ import * as utils from "./UpdateComponents/ReducersComponents/utils";
 import useHandleChannelEvents from "./UpdateComponents/useHandleChannelEvents";
 
 export default function UserMessage(props) {
-  // props
-
   const {
     message,
     userId,
@@ -30,13 +27,12 @@ export default function UserMessage(props) {
     config = {},
   } = props;
 
-  // useState
   const [messageText, changeMessageText] = useState(message.message);
   const [messageOptions, setMessageOptions] = useState(false);
   const [pressedUpdate, setPressedUpdate] = useState(false);
   const [showForm, setShowForm] = useState(false);
 
-  const openDropdown = (e) => {
+  const clickedDropdown = () => {
     setMessageOptions(!messageOptions);
   };
 
@@ -134,8 +130,10 @@ export default function UserMessage(props) {
   );
 
   const closeDropdown = (e) => {
+    e.preventDefault();
     updateVotingMessage(message.messageId, messageText);
     setMessageOptions(!messageOptions);
+    changeMessageText('');
     setShowForm(false);
   };
 
@@ -157,7 +155,7 @@ export default function UserMessage(props) {
           }
         />
         <CardContent>
-          {!pressedUpdate && (
+          {!pressedUpdate && !showForm && (
             <Typography variant="body2" component="p">
               {message.message}
             </Typography>
@@ -191,7 +189,7 @@ export default function UserMessage(props) {
         </CardContent>
         <button
           className="user-message__options-btn"
-          onClick={(e) => openDropdown(e)}
+          onClick={clickedDropdown}
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
             <path
@@ -250,7 +248,7 @@ export default function UserMessage(props) {
                   {showForm && (
                     <li
                       className="dropdown__menu-item"
-                      onClick={() => closeDropdown()}
+                      onClick={(e) => closeDropdown(e)}
                     >
                       <span className="dropdown__menu-item-text">Save</span>
                     </li>

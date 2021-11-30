@@ -12,7 +12,6 @@ import CustomizedMessageItem from "./MessageItems/CustomizedMessageItem";
 
 function GroupChannel({ sdk, userId }) {
   const [showSettings, setShowSettings] = useState(false);
-  const [showForm, setShowForm] = useState(false);
   const [currentChannel, setCurrentChannel] = useState(null);
   const currentChannelUrl = currentChannel ? currentChannel.url : "";
   var channelChatDiv = document.getElementsByClassName("channel-chat")[0];
@@ -27,57 +26,6 @@ function GroupChannel({ sdk, userId }) {
     channelChatDiv.style.cssFloat = "right";
   };
 
-  const renderQuestionForm = () => {
-    setShowForm(!showForm);
-  };
-
-  // if (currentChannel && sdk && sdk.ChannelHandler) {
-  //   var channelHandler = new sdk.ChannelHandler();
-  //   channelHandler.onMessageReceived = (channel, message) => {
-  //     console.log("onMessageReceived", message);
-  //     var channelParams = new sdk.GroupChannelParams();
-  //     var messageId = message.messageId;
-  //     var newChannelData = {};
-  //     newChannelData[`${messageId}`] = {
-  //       voting_app_options: [],
-  //     };
-  //     var newChannelDataString = JSON.stringify(newChannelData);
-  //     channelParams.data = newChannelDataString;
-  //     channel.updateChannel(channelParams, (err, channel) => {
-  //       var parsedChannelData = JSON.parse(channelParams.data);
-  //       console.log("updatedChannelParamsData new=", parsedChannelData);
-  //     });
-  //   };
-
-  //   channelHandler.onMessageUpdated = (channel, message) => {
-  //     var messageData = JSON.parse(message.data);
-  //     var messageId = message.messageId;
-  //     var newOption = {
-  //       title: message.message,
-  //       voters: [messageId],
-  //       created_by: message._sender.nickname,
-  //     };
-  //     var channelParams = new sdk.GroupChannelParams();
-  //     if (
-  //       messageData.hasOwnProperty("type") &&
-  //       messageData["type"] === "VOTING_APP"
-  //     ) {
-  //       var parsedChannelData = JSON.parse(channel.data);
-  //       if (parsedChannelData.hasOwnProperty(`${messageId}`)) {
-  //         parsedChannelData[`${messageId}`].voting_app_options.push(newOption);
-  //         var channelDataString = JSON.stringify(parsedChannelData);
-  //         channelParams.data = channelDataString;
-  //         channel.updateChannel(channelParams, (err, channel) => {
-  //           var parsedChannelData = JSON.parse(channelParams.data);
-  //           console.log("updatedChannelParamsData set=", parsedChannelData);
-  //         });
-  //       }
-  //     }
-  //   };
-
-  //   sdk.addChannelHandler("abc12334", channelHandler);
-  // }
-  console.log("currentChannel", currentChannel);
   return (
     <div className="channel-wrap">
       <div className="channel-list">
@@ -88,7 +36,6 @@ function GroupChannel({ sdk, userId }) {
         />
       </div>
       <div className="channel-chat">
-        <button onClick={renderQuestionForm}>Suggest Task</button>
         <Channel
           channelUrl={currentChannelUrl}
           onChatHeaderActionClick={() => {

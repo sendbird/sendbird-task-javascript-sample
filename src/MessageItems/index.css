@@ -33,6 +33,13 @@
     background-color: white;
   }
 
+  #add-options-btn{
+    margin-top: 5px;
+  }
+  #vote-btn{
+    margin-right: 5px;
+  }
+
   #option-vote-count {
     margin: 0;
   }

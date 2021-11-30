@@ -8,7 +8,6 @@ import {
   TextField,
 } from "@material-ui/core";
 import "./index.css";
-import QuestionForm from "../QuestionForm";
 
 export default function VotingMessage(props) {
   // props
@@ -44,15 +43,13 @@ export default function VotingMessage(props) {
     setShowOptionsForm(!showOptionsForm);
   };
 
-  const handleChange = (e) => {
-    setOptionsValue(e.target.value);
-  };
-
   const renderQuestionForm = () => {
     setShowForm(!showForm);
   };
 
-  const deleteOption = (e) => {};
+  const deleteOption = (e) => {
+
+  };
 
   const handleVote = (e) => {
     var channelParsedData = JSON.parse(currentChannel.data);
@@ -100,26 +97,13 @@ export default function VotingMessage(props) {
       var parsedChannelData = JSON.parse(channelParams.data);
       console.log("updatedChannelParamsData set=", parsedChannelData);
     });
-    setOptionsValue("");
+    setOptionsValue('');
   };
 
   var channelParsedData = JSON.parse(currentChannel.data);
   var suggestionMessage = channelParsedData[message.messageId];
-  var votingOptions = false;
-  //suggestionMessage['voting_app_options'] !== undefined
-  // suggestionMessage.hasOwnProperty('voting_app_options')
-
-  //going thru the channels params **
-  // console.log("outside; channelData=", channelParsedData);
-  if (suggestionMessage) {
-    // console.log('voting_app_options', suggestionMessage['voting_app_options'])
-    //options array is defined already b/c created onUpdate of message to be a voting message
-
-    votingOptions =
-      suggestionMessage["voting_app_options"].length === 0
-        ? false
-        : suggestionMessage["voting_app_options"];
-  }
+  var votingOptions = suggestionMessage["voting_app_options"].length === 0 ? false : suggestionMessage["voting_app_options"];
+  
 
   return (
     <div className="user-message">
@@ -149,7 +133,6 @@ export default function VotingMessage(props) {
                   </button>
                 </div>
               )}
-
               {showOptionsForm && (
                 <div>
                   <form onSubmit={(e) => handleOptionsSubmit(e)}>
@@ -160,7 +143,9 @@ export default function VotingMessage(props) {
                       id="option"
                       name="option"
                       value={optionsValue}
-                      onChange={handleChange}
+                      onChange={(e) =>{
+                        setOptionsValue(e.target.value)}
+                      } 
                     />
                     <br></br>
                     <input type="submit" value="Submit" />
