@@ -27,10 +27,17 @@ export default function VotingMessage(props) {
   const [pressedUpdate, setPressedUpdate] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [showOptionsForm, setShowOptionsForm] = useState(false);
-  const [optionsValue, setOptionsValue] = useState('');
- 
+  const [optionsValue, setOptionsValue] = useState("");
+
   const openDropdown = (e) => {
     setMessageOptions(!messageOptions);
+  };
+
+  //change once figure out how to update message w/o rerender
+  const closeDropdown = (e) => {
+    // updateVotingMessage(message.messageId, messageText);
+    setMessageOptions(!messageOptions);
+    setShowForm(false);
   };
 
   const toggleOptionsForm = () => {
@@ -38,16 +45,14 @@ export default function VotingMessage(props) {
   };
 
   const handleChange = (e) => {
-    setOptionsValue(e.target.value)
+    setOptionsValue(e.target.value);
   };
 
   const renderQuestionForm = () => {
     setShowForm(!showForm);
   };
 
- const deleteOption = (e) => {
-
- }
+  const deleteOption = (e) => {};
 
   const handleVote = (e) => {
     var channelParsedData = JSON.parse(currentChannel.data);
@@ -75,7 +80,7 @@ export default function VotingMessage(props) {
   };
 
   const handleOptionsSubmit = (e) => {
-    e.preventDefault();   
+    e.preventDefault();
     setShowOptionsForm(false);
     var messageId = message.messageId;
     var currentUserId = parseInt(userId);
@@ -95,7 +100,7 @@ export default function VotingMessage(props) {
       var parsedChannelData = JSON.parse(channelParams.data);
       console.log("updatedChannelParamsData set=", parsedChannelData);
     });
-    setOptionsValue('');
+    setOptionsValue("");
   };
 
   var channelParsedData = JSON.parse(currentChannel.data);
@@ -138,9 +143,11 @@ export default function VotingMessage(props) {
             <Typography variant="body2" component="p">
               {message.message}
               {!showOptionsForm && (
-                <button onClick={toggleOptionsForm} id="add-options-btn">
-                  Add Options
-                </button>
+                <div>
+                  <button onClick={toggleOptionsForm} id="add-options-btn">
+                    Add Options
+                  </button>
+                </div>
               )}
 
               {showOptionsForm && (
@@ -164,14 +171,22 @@ export default function VotingMessage(props) {
               {votingOptions &&
                 votingOptions.map(function (option) {
                   return (
-                    <div>
-                      <h3>{option.title}</h3>
-                      {option.voters && <h4>{option.voters.length}</h4>}
-                      <button onClick={handleVote} data-option={option.title}>
+                    <div id="options-wrapper">
+                      <p id="option-title">{option.title}</p>
+                      {option.voters && <p id="option-vote-count">{option.voters.length}</p>}
+                      <button
+                        onClick={handleVote}
+                        data-option={option.title}
+                        id="vote-btn"
+                      >
                         Vote
                       </button>
                       {/* if you're the creator, you can see the delete btn */}
-                      <button onClick={deleteOption} data-option={option.title}>
+                      <button
+                        onClick={deleteOption}
+                        data-option={option.title}
+                        id="delete-btn"
+                      >
                         Delete
                       </button>
                     </div>
@@ -180,6 +195,19 @@ export default function VotingMessage(props) {
             </Typography>
           )}
           {pressedUpdate && (
+            <div className="user-message__text-area">
+              <TextField
+                multiline
+                variant="filled"
+                rowsMax={4}
+                value={messageText}
+                onChange={(event) => {
+                  changeMessageText(event.target.value);
+                }}
+              />
+            </div>
+          )}
+          {showForm && (
             <div className="user-message__text-area">
               <TextField
                 multiline
@@ -217,21 +245,20 @@ export default function VotingMessage(props) {
                       onClick={renderQuestionForm}
                     >
                       <span className="dropdown__menu-item-text">
-                        Suggest Task
+                        Change Task
                       </span>
                     </li>
                   )}
-
-                  {showForm && (
-                    <div>
-                      <QuestionForm
-                        sdk={sdk}
-                        currentChannel={currentChannel}
-                        renderQuestionForm={renderQuestionForm}
-                      />
-                    </div>
+                  {pressedUpdate && !showForm && (
+                    <li
+                      className="dropdown__menu-item"
+                      onClick={() =>
+                        onUpdateMessage(message.messageId, messageText)
+                      }
+                    >
+                      <span className="dropdown__menu-item-text">Save</span>
+                    </li>
                   )}
-
                   {pressedUpdate && (
                     <li
                       className="dropdown__menu-item"
@@ -252,17 +279,23 @@ export default function VotingMessage(props) {
                     </li>
                   )}
 
-                  {pressedUpdate && (
+                  {showForm && (
                     <li
                       className="dropdown__menu-item"
-                      onClick={() =>
-                        onUpdateMessage(message.messageId, messageText)
-                      }
+                      onClick={() => closeDropdown()}
                     >
                       <span className="dropdown__menu-item-text">Save</span>
                     </li>
                   )}
 
+                  {showForm && (
+                    <li
+                      className="dropdown__menu-item"
+                      onClick={() => setShowForm(false)}
+                    >
+                      <span className="dropdown__menu-item-text">Cancel</span>
+                    </li>
+                  )}
                   {!pressedUpdate && !showForm && (
                     <li
                       className="dropdown__menu-item"

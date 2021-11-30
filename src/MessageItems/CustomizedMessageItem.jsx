@@ -6,17 +6,17 @@ import "./index.css";
 import VotingMessage from "./VotingMessage";
 
 export default function CustomizedMessageItem(props) {
-  const { message, emojiContainer, onDeleteMessage, onUpdateMessage, userId, sdk, currentChannel } =
-    props;
+  const {
+    message,
+    emojiContainer,
+    onDeleteMessage,
+    onUpdateMessage,
+    userId,
+    sdk,
+    currentChannel,
+  } = props;
 
-  // var data = message.data ? true : false;
   const MessageHOC = useMemo(() => {
-  
-    // var messageData = JSON.parse(message.data);
-//not every msg.data has something so if it's null then make the variable =false
-    // var messageData = message.data === null ? false : JSON.parse(message.data);
-    // console.log(messageData)
-
     if (message.isAdminMessage && message.isAdminMessage()) {
       return () => <AdminMessage message={message} />;
     } else if (message.isFileMessage && message.isFileMessage()) {
@@ -27,27 +27,19 @@ export default function CustomizedMessageItem(props) {
           onDeleteMessage={onDeleteMessage}
         />
       );
-    }
-     else if ( 
-      message.customType ===  "VOTING_APP"
-      // &&
-      // messageData.hasOwnProperty("type") &&
-      // messageData["type"] === "VOTING_APP"
-    ) {
+    } else if (message.customType === "VOTING_APP") {
       return () => (
-      <VotingMessage
-        message={message}
-        userId={userId}
-        emojiContainer={emojiContainer}
-        onDeleteMessage={onDeleteMessage}
-        onUpdateMessage={onUpdateMessage}
-        sdk={sdk}
-        currentChannel={currentChannel}
-      />
-      )
-    }
-    
-    else if (message.isUserMessage && message.isUserMessage()) {
+        <VotingMessage
+          message={message}
+          userId={userId}
+          emojiContainer={emojiContainer}
+          onDeleteMessage={onDeleteMessage}
+          onUpdateMessage={onUpdateMessage}
+          sdk={sdk}
+          currentChannel={currentChannel}
+        />
+      );
+    } else if (message.isUserMessage && message.isUserMessage()) {
       return () => (
         <UserMessage
           message={message}
@@ -61,7 +53,15 @@ export default function CustomizedMessageItem(props) {
       );
     }
     return () => <div />;
-  }, [message, emojiContainer, userId, onDeleteMessage, onUpdateMessage, sdk, currentChannel]);
+  }, [
+    message,
+    emojiContainer,
+    userId,
+    onDeleteMessage,
+    onUpdateMessage,
+    sdk,
+    currentChannel,
+  ]);
 
   return (
     <div id={message.messageId} className="customized-message-item">

@@ -1,3 +1,43 @@
 .customized-message-item{
     position: relative;
   }
+
+.sendbird_dropdown_menu{
+  padding: 0px;
+  margin: 0px 22rem;
+  box-shadow: var(--sendbird-light-shadow-02);
+  background-color: var(--sendbird-light-background-50);
+  min-width: 140px;
+  padding: 8px 0px;
+  border-radius: 4px;
+  list-style: none;
+}
+
+.user-message__text-area {
+  margin: 0px;
+  border-radius: 4px;
+}
+
+.MuiInputBase-root.MuiFilledInput-root.MuiFilledInput-underline.MuiInputBase-formControl.MuiInputBase-multiline.MuiFilledInput-multiline{
+  background-color: white;
+  box-shadow: var(--sendbird-light-shadow-02);
+}
+  #add-options-btn,
+  #delete-btn,
+  #vote-btn {
+    border-radius: 20px;
+    border: 2px solid rgb(209, 209, 209);
+    right: 10px;
+    top: 8px;
+    cursor: pointer;
+    background-color: white;
+  }
+
+  #option-vote-count {
+    margin: 0;
+  }
+
+  #option-title {
+    margin-top: 20px;
+    margin-bottom: 0;
+  }

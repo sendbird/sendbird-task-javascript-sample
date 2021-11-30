@@ -78,7 +78,7 @@ export default function UserMessage(props) {
     const userMessageParams = new sdk.UserMessageParams();
     var jsonMessageData = {
       type: "VOTING_APP",
-      title: `${text}`
+      title: `${text}`,
     };
     var jsonString = JSON.stringify(jsonMessageData);
     userMessageParams.data = jsonString;
@@ -132,6 +132,12 @@ export default function UserMessage(props) {
     { currentChannel, messagesDispatcher, onBeforeUpdateUserMessage },
     { logger, sdk, pubSub }
   );
+
+  const closeDropdown = (e) => {
+    updateVotingMessage(message.messageId, messageText);
+    setMessageOptions(!messageOptions);
+    setShowForm(false);
+  };
 
   return (
     <div className="user-message">
@@ -244,9 +250,7 @@ export default function UserMessage(props) {
                   {showForm && (
                     <li
                       className="dropdown__menu-item"
-                      onClick={() =>
-                        updateVotingMessage(message.messageId, messageText)
-                      }
+                      onClick={() => closeDropdown()}
                     >
                       <span className="dropdown__menu-item-text">Save</span>
                     </li>
