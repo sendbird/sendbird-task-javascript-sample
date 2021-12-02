@@ -184,15 +184,22 @@ export default function VotingMessage(props) {
     setShowOptionsForm(false);
     var messageId = message.messageId;
     var currentUserId = parseInt(userId);
-    var newOption = {
-      title: optionsValue,
-      voters: [currentUserId],
-      created_by: message._sender.nickname,
-    };
+
     var channelParams = new sdk.GroupChannelParams();
     var parsedChannelData = JSON.parse(currentChannel.data);
     var messageData = parsedChannelData[messageId];
     var votingOptions = messageData["voting_app_options"];
+    console.log("options:", votingOptions.length);
+    var optionNumber = votingOptions.length + 1;
+    //check current options.length & set id= to that +1
+
+    var newOption = {
+      id: optionNumber,
+      title: optionsValue,
+      voters: [currentUserId],
+      created_by: message._sender.nickname,
+    };
+
     votingOptions.push(newOption);
     var channelDataString = JSON.stringify(parsedChannelData);
     channelParams.data = channelDataString;
@@ -211,7 +218,7 @@ export default function VotingMessage(props) {
       : suggestionMessage["voting_app_options"];
 
   return (
-    <div className="user-message">
+    <div className="voting-message">
       <Card>
         <CardHeader
           avatar={
@@ -234,18 +241,20 @@ export default function VotingMessage(props) {
               {!showOptionsForm && (
                 <div>
                   <button onClick={toggleOptionsForm} id="add-options-btn">
-                    Add Options
+                    + Add Option
                   </button>
                 </div>
               )}
               {showOptionsForm && (
-                <div>
+                <div id="option-form">
                   <form onSubmit={(e) => handleOptionsSubmit(e)}>
-                    <label htmlFor="question">Option:</label>
+                    <label htmlFor="question" id="option-header">
+                      Option:
+                    </label>
                     <br></br>
                     <input
                       type="text"
-                      id="option"
+                      id="option-input"
                       name="option"
                       value={optionsValue}
                       onChange={(e) => {
@@ -253,37 +262,61 @@ export default function VotingMessage(props) {
                       }}
                     />
                     <br></br>
-                    <input type="submit" value="Submit" />
-                    <button onClick={toggleOptionsForm}>Cancel</button>
+                    <input
+                      type="submit"
+                      value="Submit"
+                      id="option-submit-btn"
+                    />
+                    <button onClick={toggleOptionsForm} id="option-cancel-btn">
+                      Cancel
+                    </button>
                   </form>
                 </div>
               )}
               {votingOptions &&
                 votingOptions.map(function (option) {
                   return (
-                    <div id="options-wrapper" key={option.title}>
-                      <p id="option-title">{option.title}</p>
-                      {option.voters && (
-                        <p id="option-vote-count">{option.voters.length}</p>
-                      )}
-                      <button
-                        onClick={handleVote}
-                        data-option={option.title}
-                        id="vote-btn"
-                      >
-                        Vote
-                      </button>
-                      {/* if you're the creator, you can see the delete btn */}
-                      <button
+                    <div id="options-wrapper" >
+                        <p id="option-title">
+                          <p id="option-number-text">{option.id}</p>:{" "}
+                          {option.title}
+                        </p>
+                        {option.voters && (
+                          <p id="option-vote-count">
+                            <p id="total-votes-text">Total Votes:</p>{" "}
+                            {option.voters.length}
+                          </p>
+                        )}
+
+                        {/* if you're the creator, you can see the delete btn */}
+                        {/* <button
                         onClick={deleteOption}
                         data-option={option.title}
                         id="delete-btn"
                       >
                         Delete
-                      </button>
+                      </button> */}
+
                     </div>
                   );
                 })}
+
+                <div id="vote-buttons-wrapper"> 
+                {votingOptions &&
+                votingOptions.map(function (option) {
+                  return (
+                      <div id="vote-button-wrap">
+                        <button
+                          onClick={handleVote}
+                          data-option={option.title}
+                          id="vote-btn"
+                        >
+                          {option.id}
+                        </button>
+                      </div>
+                  );
+                })}
+                </div>
             </Typography>
           )}
           {pressedUpdate && (
@@ -313,10 +346,7 @@ export default function VotingMessage(props) {
             </div>
           )}
         </CardContent>
-        <button
-          className="user-message__options-btn"
-          onClick={ openDropdown}
-        >
+        <button className="user-message__options-btn" onClick={openDropdown}>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
             <path
               className="icon-more_svg__fill"

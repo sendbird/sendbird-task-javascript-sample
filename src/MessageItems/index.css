@@ -1,8 +1,8 @@
-.customized-message-item{
-    position: relative;
-  }
+.customized-message-item {
+  position: relative;
+}
 
-.sendbird_dropdown_menu{
+.sendbird_dropdown_menu {
   padding: 0px;
   margin: 0px 22rem;
   box-shadow: var(--sendbird-light-shadow-02);
@@ -18,33 +18,63 @@
   border-radius: 4px;
 }
 
-.MuiInputBase-root.MuiFilledInput-root.MuiFilledInput-underline.MuiInputBase-formControl.MuiInputBase-multiline.MuiFilledInput-multiline{
+.MuiInputBase-root.MuiFilledInput-root.MuiFilledInput-underline.MuiInputBase-formControl.MuiInputBase-multiline.MuiFilledInput-multiline {
   background-color: white;
   box-shadow: var(--sendbird-light-shadow-02);
 }
-  #add-options-btn,
-  #delete-btn,
-  #vote-btn {
-    border-radius: 20px;
-    border: 2px solid rgb(209, 209, 209);
-    right: 10px;
-    top: 8px;
-    cursor: pointer;
-    background-color: white;
-  }
+.voting-message .MuiTypography-root.MuiTypography-body2 {
+  font-weight: bold;
+}
 
-  #add-options-btn{
-    margin-top: 5px;
-  }
-  #vote-btn{
-    margin-right: 5px;
-  }
+#total-votes-text{
+  font-weight: bold;
+  display: inline;
+  font-size: .8rem;
+}
 
-  #option-vote-count {
-    margin: 0;
-  }
+#option-number-text {
+  font-weight: bold;
+  display: inline;
+}
 
-  #option-title {
-    margin-top: 20px;
-    margin-bottom: 0;
-  }
+#options-wrapper {
+  font-weight: initial;
+}
+
+#add-options-btn,
+#delete-btn,
+#vote-btn {
+  border-radius: 15px;
+  border: 1px solid var(--sendbird-iconbutton-color);
+  right: 10px;
+  padding: 4px 6px;
+  top: 8px;
+  cursor: pointer;
+  background-color: var(--sendbird-iconbutton-color);
+  font-weight: bold;
+  color: white;
+}
+
+#add-options-btn {
+  margin-top: 5px;
+}
+#vote-btn {
+  margin-right: 5px;
+}
+
+#option-vote-count {
+  margin: 0;
+}
+
+#option-title {
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
+#vote-button-wrap{
+  display: inline-block;
+}
+
+#vote-buttons-wrapper{
+  margin-top: 10px;
+}
