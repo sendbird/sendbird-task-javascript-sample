@@ -22,14 +22,24 @@
   background-color: white;
   box-shadow: var(--sendbird-light-shadow-02);
 }
-.voting-message .MuiTypography-root.MuiTypography-body2 {
-  font-weight: bold;
+.voting-message .MuiCardContent-root {
+  padding-top: 0px;
 }
 
-#total-votes-text{
+.voting-message .MuiCardContent-root .MuiTypography-root.MuiTypography-body2 {
+  font-weight: 550;
+  font-size: 0.875rem;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  line-height: 1.43;
+  letter-spacing: -0.01071em;
+  border-left: 2px solid var(--sendbird-iconbutton-color);
+  padding-left: 10px;
+}
+
+#total-votes-text {
   font-weight: bold;
   display: inline;
-  font-size: .8rem;
+  font-size: 0.8rem;
 }
 
 #option-number-text {
@@ -43,20 +53,26 @@
 
 #add-options-btn,
 #delete-btn,
-#vote-btn {
-  border-radius: 15px;
+#vote-btn,
+#option-submit-btn,
+#option-cancel-btn {
+  border-radius: 5px;
   border: 1px solid var(--sendbird-iconbutton-color);
-  right: 10px;
-  padding: 4px 6px;
-  top: 8px;
+  padding: 3px 6px;
   cursor: pointer;
   background-color: var(--sendbird-iconbutton-color);
   font-weight: bold;
   color: white;
 }
 
+#option-submit-btn,
+#option-cancel-btn {
+  margin-top: 10px;
+  margin-right: 5px;
+}
+
 #add-options-btn {
-  margin-top: 5px;
+  margin-top: 10px;
 }
 #vote-btn {
   margin-right: 5px;
@@ -66,15 +82,25 @@
   margin: 0;
 }
 
+#option-form,
 #option-title {
   margin-top: 10px;
   margin-bottom: 0;
 }
 
-#vote-button-wrap{
+/* 
+#option-form{
+  border-bottom: 2px solid var(--sendbird-iconbutton-color);
+  border-top: 2px solid var(--sendbird-iconbutton-color);
+  padding-bottom: 20px;
+  padding-top: 20px;
+  width: 20rem;
+} */
+
+#vote-button-wrap {
   display: inline-block;
 }
 
-#vote-buttons-wrapper{
+#vote-buttons-wrapper {
   margin-top: 10px;
 }
