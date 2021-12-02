@@ -24,6 +24,7 @@ export default function UserMessage(props) {
     onUpdateMessage,
     sdk,
     currentChannel,
+    updateLastMessage,
     config = {},
   } = props;
 
@@ -74,6 +75,7 @@ export default function UserMessage(props) {
     const userMessageParams = new sdk.UserMessageParams();
     var jsonMessageData = {
       type: "VOTING_APP",
+      version: 1,
       title: `${text}`,
     };
     var jsonString = JSON.stringify(jsonMessageData);
@@ -125,15 +127,20 @@ export default function UserMessage(props) {
 
   //calls what onUpdateMessage is equal to
   const updateVotingMessage = useUpdateMessageCallback(
-    { currentChannel, messagesDispatcher, onBeforeUpdateUserMessage },
+    {
+      currentChannel,
+      messagesDispatcher,
+      onBeforeUpdateUserMessage,
+      updateLastMessage,
+    },
     { logger, sdk, pubSub }
   );
 
-  const closeDropdown = (e) => {
+  const suggestionSubmit = (e) => {
     e.preventDefault();
     updateVotingMessage(message.messageId, messageText);
     setMessageOptions(!messageOptions);
-    changeMessageText('');
+    changeMessageText("");
     setShowForm(false);
   };
 
@@ -187,10 +194,7 @@ export default function UserMessage(props) {
             </div>
           )}
         </CardContent>
-        <button
-          className="user-message__options-btn"
-          onClick={clickedDropdown}
-        >
+        <button className="user-message__options-btn" onClick={clickedDropdown}>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
             <path
               className="icon-more_svg__fill"
@@ -248,7 +252,7 @@ export default function UserMessage(props) {
                   {showForm && (
                     <li
                       className="dropdown__menu-item"
-                      onClick={(e) => closeDropdown(e)}
+                      onClick={(e) => suggestionSubmit(e)}
                     >
                       <span className="dropdown__menu-item-text">Save</span>
                     </li>

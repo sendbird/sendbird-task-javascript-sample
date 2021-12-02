@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useReducer, useEffect, useRef } from "react";
 import {
   Card,
   CardHeader,
@@ -8,6 +8,13 @@ import {
   TextField,
 } from "@material-ui/core";
 import "./index.css";
+import useUpdateMessageCallback from "./UpdateComponents/useUpdateMessageCallback";
+import messagesReducer from "./UpdateComponents/ReducersComponents/reducers";
+import messagesInitialState from "./UpdateComponents/ReducersComponents/initialState";
+import pubSubFactory from "./UpdateComponents/ReducersComponents/pubSubIndex";
+import { LoggerFactory } from "./UpdateComponents/logger";
+import * as utils from "./UpdateComponents/ReducersComponents/utils";
+import useHandleChannelEvents from "./UpdateComponents/useHandleChannelEvents";
 
 export default function VotingMessage(props) {
   // props
@@ -18,6 +25,8 @@ export default function VotingMessage(props) {
     onUpdateMessage,
     sdk,
     currentChannel,
+    updateLastMessage,
+    config = {},
   } = props;
 
   // useState
@@ -28,14 +37,110 @@ export default function VotingMessage(props) {
   const [showOptionsForm, setShowOptionsForm] = useState(false);
   const [optionsValue, setOptionsValue] = useState("");
 
-  const openDropdown = (e) => {
+  const openDropdown = () => {
     setMessageOptions(!messageOptions);
   };
 
-  //change once figure out how to update message w/o rerender
-  const closeDropdown = (e) => {
-    // updateVotingMessage(message.messageId, messageText);
+  const [messagesStore, messagesDispatcher] = useReducer(
+    messagesReducer,
+    messagesInitialState
+  );
+
+  const updateChannelParams = () => {
+    var channelParams = new sdk.GroupChannelParams();
+    var messageId = message.messageId;
+    var channelDataString = "";
+    if (currentChannel.data) {
+      var parsedChannelData = JSON.parse(currentChannel.data);
+      parsedChannelData[`${messageId}`] = {
+        voting_app_options: [],
+      };
+      channelDataString = JSON.stringify(parsedChannelData);
+    } else {
+      var newChannelData = {};
+      newChannelData[`${messageId}`] = {
+        voting_app_options: [],
+      };
+      channelDataString = JSON.stringify(newChannelData);
+    }
+    channelParams.data = channelDataString;
+    currentChannel.updateChannel(channelParams, (err, channel) => {
+      var parsedChannelData = JSON.parse(channelParams.data);
+      console.log("updatedChannelParamsData new=", parsedChannelData);
+    });
+  };
+
+  const onBeforeUpdateUserMessage = (text) => {
+    updateChannelParams();
+    const userMessageParams = new sdk.UserMessageParams();
+    var jsonMessageData = {
+      type: "VOTING_APP",
+      version: 1,
+      title: `${text}`,
+    };
+    var jsonString = JSON.stringify(jsonMessageData);
+    userMessageParams.data = jsonString;
+    userMessageParams.customType = "VOTING_APP";
+    userMessageParams.message = text;
+    return userMessageParams;
+  };
+
+  const sdkInit = sdk.initialized;
+
+  //https://github.com/sendbird/uikit-js/blob/8214485dee0b8a211261a629427e9f56ba867f50/src/lib/Sendbird.jsx
+  const [pubSub, setPubSub] = useState();
+  useEffect(() => {
+    setPubSub(pubSubFactory());
+  }, []);
+
+  // handles API calls from withSendbird
+  useEffect(() => {
+    const subScriber = utils.pubSubHandler(
+      currentChannel.url,
+      pubSub,
+      messagesDispatcher
+    );
+    return () => {
+      utils.pubSubHandleRemover(subScriber);
+    };
+  }, [currentChannel.url, sdkInit, pubSub]);
+
+  const { logLevel = "" } = config;
+  const [logger, setLogger] = useState(LoggerFactory(logLevel));
+  useEffect(() => {
+    setLogger(LoggerFactory(logLevel));
+  }, [logLevel]);
+
+  const scrollRef = useRef(null);
+  const { hasMoreToBottom } = messagesStore;
+
+  // Hook to handle ChannelEvents and send values to useReducer using messagesDispatcher
+  useHandleChannelEvents(
+    { currentChannel, sdkInit, hasMoreToBottom },
+    {
+      messagesDispatcher,
+      sdk,
+      logger,
+      scrollRef,
+    }
+  );
+
+  //calls what onUpdateMessage is equal to
+  const updateVotingMessage = useUpdateMessageCallback(
+    {
+      currentChannel,
+      messagesDispatcher,
+      onBeforeUpdateUserMessage,
+      updateLastMessage,
+    },
+    { logger, sdk, pubSub }
+  );
+
+  const changeSuggestionSubmit = (e) => {
+    e.preventDefault();
+    updateVotingMessage(message.messageId, messageText);
     setMessageOptions(!messageOptions);
+    changeMessageText("");
     setShowForm(false);
   };
 
@@ -47,9 +152,7 @@ export default function VotingMessage(props) {
     setShowForm(!showForm);
   };
 
-  const deleteOption = (e) => {
-
-  };
+  const deleteOption = (e) => {};
 
   const handleVote = (e) => {
     var channelParsedData = JSON.parse(currentChannel.data);
@@ -97,13 +200,15 @@ export default function VotingMessage(props) {
       var parsedChannelData = JSON.parse(channelParams.data);
       console.log("updatedChannelParamsData set=", parsedChannelData);
     });
-    setOptionsValue('');
+    setOptionsValue("");
   };
 
   var channelParsedData = JSON.parse(currentChannel.data);
   var suggestionMessage = channelParsedData[message.messageId];
-  var votingOptions = suggestionMessage["voting_app_options"].length === 0 ? false : suggestionMessage["voting_app_options"];
-  
+  var votingOptions =
+    suggestionMessage["voting_app_options"].length === 0
+      ? false
+      : suggestionMessage["voting_app_options"];
 
   return (
     <div className="user-message">
@@ -143,9 +248,9 @@ export default function VotingMessage(props) {
                       id="option"
                       name="option"
                       value={optionsValue}
-                      onChange={(e) =>{
-                        setOptionsValue(e.target.value)}
-                      } 
+                      onChange={(e) => {
+                        setOptionsValue(e.target.value);
+                      }}
                     />
                     <br></br>
                     <input type="submit" value="Submit" />
@@ -156,9 +261,11 @@ export default function VotingMessage(props) {
               {votingOptions &&
                 votingOptions.map(function (option) {
                   return (
-                    <div id="options-wrapper">
+                    <div id="options-wrapper" key={option.title}>
                       <p id="option-title">{option.title}</p>
-                      {option.voters && <p id="option-vote-count">{option.voters.length}</p>}
+                      {option.voters && (
+                        <p id="option-vote-count">{option.voters.length}</p>
+                      )}
                       <button
                         onClick={handleVote}
                         data-option={option.title}
@@ -208,7 +315,7 @@ export default function VotingMessage(props) {
         </CardContent>
         <button
           className="user-message__options-btn"
-          onClick={(e) => openDropdown(e)}
+          onClick={ openDropdown}
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
             <path
@@ -248,6 +355,7 @@ export default function VotingMessage(props) {
                     <li
                       className="dropdown__menu-item"
                       onClick={() => setPressedUpdate(false)}
+                      key={message.messageId}
                     >
                       <span className="dropdown__menu-item-text">Cancel</span>
                     </li>
@@ -267,7 +375,7 @@ export default function VotingMessage(props) {
                   {showForm && (
                     <li
                       className="dropdown__menu-item"
-                      onClick={() => closeDropdown()}
+                      onClick={(e) => changeSuggestionSubmit(e)}
                     >
                       <span className="dropdown__menu-item-text">Save</span>
                     </li>

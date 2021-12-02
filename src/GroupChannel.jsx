@@ -10,7 +10,7 @@ import "./index.css";
 import "sendbird-uikit/dist/index.css";
 import CustomizedMessageItem from "./MessageItems/CustomizedMessageItem";
 
-function GroupChannel({ sdk, userId }) {
+function GroupChannel({ sdk, userId, updateLastMessage}) {
   const [showSettings, setShowSettings] = useState(false);
   const [currentChannel, setCurrentChannel] = useState(null);
   const currentChannelUrl = currentChannel ? currentChannel.url : "";
@@ -57,6 +57,7 @@ function GroupChannel({ sdk, userId }) {
               userId={userId}
               sdk={sdk}
               currentChannel={currentChannel}
+              updateLastMessage={updateLastMessage}
             />
           )}
         />
@@ -80,5 +81,6 @@ export default withSendBird(GroupChannel, (store) => {
   return {
     sdk: sendBirdSelectors.getSdk(store),
     user: store.stores.userStore.user,
+    updateLastMessage: sendBirdSelectors.getUpdateUserMessage(store)
   };
 });

@@ -5,7 +5,7 @@ import * as messageActionTypes from "./actionTypes";
 import * as topics from "./topics";
 
 export default function useUpdateMessageCallback(
-  { currentChannel, messagesDispatcher, onBeforeUpdateUserMessage },
+  { currentChannel, messagesDispatcher, onBeforeUpdateUserMessage, updateLastMessage },
   { logger, pubSub, sdk }
 ) {
   return useCallback(
@@ -32,6 +32,7 @@ export default function useUpdateMessageCallback(
         ? onBeforeUpdateUserMessage(text)
         : createParamsDefault(text);
 
+        
       currentChannel.updateUserMessage(messageId, params, (r, e) => {
         logger.info("Channel: Updating message!", params);
         const swapParams = sdk.getErrorFirstCallback();
@@ -60,6 +61,7 @@ export default function useUpdateMessageCallback(
         } else {
           logger.warning("Channel: Updating message failed!", err);
         }
+        updateLastMessage(currentChannel.url, message.messageId, params);
       });
     },
     [
