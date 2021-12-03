@@ -22,7 +22,6 @@ export default function VotingMessage(props) {
     message,
     userId,
     onDeleteMessage,
-    onUpdateMessage,
     sdk,
     currentChannel,
     updateLastMessage,
@@ -125,7 +124,6 @@ export default function VotingMessage(props) {
     }
   );
 
-  //calls what onUpdateMessage is equal to
   const updateVotingMessage = useUpdateMessageCallback(
     {
       currentChannel,
@@ -151,8 +149,6 @@ export default function VotingMessage(props) {
   const renderQuestionForm = () => {
     setShowForm(!showForm);
   };
-
-  const deleteOption = (e) => {};
 
   const handleVote = (e) => {
     var channelParsedData = JSON.parse(currentChannel.data);
@@ -287,16 +283,6 @@ export default function VotingMessage(props) {
                             {option.voters.length}
                           </p>
                         )}
-
-                        {/* if you're the creator, you can see the delete btn */}
-                        {/* <button
-                        onClick={deleteOption}
-                        data-option={option.title}
-                        id="delete-btn"
-                      >
-                        Delete
-                      </button> */}
-
                     </div>
                   );
                 })}

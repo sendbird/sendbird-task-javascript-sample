@@ -2,7 +2,6 @@
   position: relative;
 }
 
-
 .user-message__text-area {
   margin: 0px;
   border-radius: 4px;
@@ -11,6 +10,8 @@
 .MuiInputBase-root.MuiFilledInput-root.MuiFilledInput-underline.MuiInputBase-formControl.MuiInputBase-multiline.MuiFilledInput-multiline {
   background-color: white;
   box-shadow: var(--sendbird-light-shadow-02);
+  width: 300px;
+  border: 2px solid #6210cc;
 }
 .voting-message .MuiCardContent-root {
   padding-top: 0px;
@@ -22,7 +23,7 @@
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   line-height: 1.43;
   letter-spacing: -0.01071em;
-  border-left: 2px solid var(--sendbird-iconbutton-color);
+  border-left: 2px solid #6210cc;
   padding-left: 10px;
 }
 
@@ -47,10 +48,10 @@
 #option-submit-btn,
 #option-cancel-btn {
   border-radius: 5px;
-  border: 1px solid var(--sendbird-iconbutton-color);
+  border: 1px solid #6210cc;
   padding: 3px 6px;
   cursor: pointer;
-  background-color: var(--sendbird-iconbutton-color);
+  background-color: #6210cc;
   font-weight: bold;
   color: white;
 }
@@ -87,26 +88,34 @@
 }
 
 .MuiPaper-root.MuiCard-root.MuiPaper-elevation1.MuiPaper-rounded {
- position: relative;
+  position: relative;
 }
-.message-options-wrap{
+.message-options-wrap {
   margin: 0px;
   padding: 5px;
   border-radius: 4px;
   position: absolute;
   display: inline-block;
   right: 6px;
-  top: 28px;
+  top: 26px;
 }
 
-.sendbird_dropdown_menu{
+.sendbird_dropdown_menu {
   width: 100px;
   min-height: 40px;
   padding: 5px;
   background-color: var(--sendbird-light-background-50);
-  border: 2px solid  var(--sendbird-iconbutton-color);;
+  border: 2px solid #6210cc;
   border-radius: 4px;
   display: inline-block;
+  font-size: 0.875rem;
+  font-weight: 400;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  line-height: 1.43;
+  letter-spacing: 0.01071em;
+
+  color: white;
+  background-color: #6210cc;
 }
 
 /* if this input field is open, move the dropdown menu to below it */
@@ -116,8 +125,4 @@
 
   position: relative;
   display: inline-block;
-}
-
-.MuiInputBase-root.MuiFilledInput-root.MuiFilledInput-underline.MuiInputBase-formControl.MuiInputBase-multiline.MuiFilledInput-multiline{
-  width: 300px;
 }
