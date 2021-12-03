@@ -15,6 +15,7 @@ import pubSubFactory from "./UpdateComponents/ReducersComponents/pubSubIndex";
 import { LoggerFactory } from "./UpdateComponents/logger";
 import * as utils from "./UpdateComponents/ReducersComponents/utils";
 import useHandleChannelEvents from "./UpdateComponents/useHandleChannelEvents";
+import AddSuggestedTask from "./AddSuggestedTask";
 
 export default function VotingMessage(props) {
   // props
@@ -305,17 +306,12 @@ export default function VotingMessage(props) {
             </Typography>
           }
           {showForm && (
-            <div className="user-message__text-area">
-              <TextField
-                multiline
-                variant="filled"
-                rowsMax={4}
-                value={messageText}
-                onChange={(event) => {
-                  changeMessageText(event.target.value);
-                }}
-              />
-            </div>
+            <AddSuggestedTask
+              messageText={messageText}
+              changeMessageText={changeMessageText}
+              changeSuggestionSubmit={changeSuggestionSubmit}
+              setShowForm={setShowForm}
+            />
           )}
         </CardContent>
         <button className="user-message__options-btn" onClick={openDropdown}>
@@ -328,46 +324,26 @@ export default function VotingMessage(props) {
             ></path>
           </svg>
         </button>
-        {messageOptions && (
+        {messageOptions && !showForm && (
           <div className="message-options-wrap">
             <ul className="sendbird_dropdown_menu">
               {message.sender && message.sender.userId === userId && (
                 <div>
-                  {!showForm && (
-                    <li
-                      className="dropdown__menu-item"
-                      onClick={renderQuestionForm}
-                    >
-                      <span className="dropdown__menu-item-text">
-                        Change Task
-                      </span>
-                    </li>
-                  )}
-                  {!showForm && (
-                    <li
-                      className="dropdown__menu-item"
-                      onClick={() => onDeleteMessage(message)}
-                    >
-                      <span className="dropdown__menu-item-text">Delete</span>
-                    </li>
-                  )}
-                  {showForm && (
-                    <li
-                      className="dropdown__menu-item"
-                      onClick={(e) => changeSuggestionSubmit(e)}
-                    >
-                      <span className="dropdown__menu-item-text">Save</span>
-                    </li>
-                  )}
+                  <li
+                    className="dropdown__menu-item"
+                    onClick={renderQuestionForm}
+                  >
+                    <span className="dropdown__menu-item-text">
+                      Change Task
+                    </span>
+                  </li>
 
-                  {showForm && (
-                    <li
-                      className="dropdown__menu-item"
-                      onClick={() => setShowForm(false)}
-                    >
-                      <span className="dropdown__menu-item-text">Cancel</span>
-                    </li>
-                  )}
+                  <li
+                    className="dropdown__menu-item"
+                    onClick={() => onDeleteMessage(message)}
+                  >
+                    <span className="dropdown__menu-item-text">Delete</span>
+                  </li>
                 </div>
               )}
             </ul>
