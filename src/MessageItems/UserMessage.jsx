@@ -127,12 +127,7 @@ export default function UserMessage(props) {
 
   //calls what onUpdateMessage is equal to
   const updateVotingMessage = useUpdateMessageCallback(
-    {
-      currentChannel,
-      messagesDispatcher,
-      onBeforeUpdateUserMessage,
-      updateLastMessage,
-    },
+    { currentChannel, messagesDispatcher, onBeforeUpdateUserMessage, updateLastMessage },
     { logger, sdk, pubSub }
   );
 
@@ -140,7 +135,7 @@ export default function UserMessage(props) {
     e.preventDefault();
     updateVotingMessage(message.messageId, messageText);
     setMessageOptions(!messageOptions);
-    changeMessageText("");
+    changeMessageText('');
     setShowForm(false);
   };
 

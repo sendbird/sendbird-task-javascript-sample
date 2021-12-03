@@ -8,7 +8,7 @@ import {
 } from "sendbird-uikit";
 import "./index.css";
 import "sendbird-uikit/dist/index.css";
-import CustomizedMessageItem from "./MessageItems/CustomizedMessageItem";
+import CustomizedMessageItem from "./CustomizedMessageItem";
 
 function GroupChannel({ sdk, userId, updateLastMessage}) {
   const [showSettings, setShowSettings] = useState(false);

@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
-import AdminMessage from "./AdminMessage";
-import FileMessage from "./FileMessage";
-import UserMessage from "./UserMessage";
+import AdminMessage from "./MessageItems/AdminMessage";
+import FileMessage from "./MessageItems/FileMessage";
+import UserMessage from "./MessageItems/UserMessage";
 import "./index.css";
-import VotingMessage from "./VotingMessage";
+import VotingMessage from "./MessageItems/VotingMessage";
 
 export default function CustomizedMessageItem(props) {
   const {

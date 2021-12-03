@@ -31,7 +31,6 @@ export default function VotingMessage(props) {
   // useState
   const [messageText, changeMessageText] = useState(message.message);
   const [messageOptions, setMessageOptions] = useState(false);
-  const [pressedUpdate, setPressedUpdate] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [showOptionsForm, setShowOptionsForm] = useState(false);
   const [optionsValue, setOptionsValue] = useState("");
@@ -231,7 +230,7 @@ export default function VotingMessage(props) {
           }
         />
         <CardContent>
-          {!pressedUpdate && (
+          {
             <Typography variant="body2" component="p">
               {message.message}
               {!showOptionsForm && (
@@ -272,25 +271,25 @@ export default function VotingMessage(props) {
               {votingOptions &&
                 votingOptions.map(function (option) {
                   return (
-                    <div id="options-wrapper" >
-                        <p id="option-title">
-                          <p id="option-number-text">{option.id}</p>:{" "}
-                          {option.title}
+                    <div id="options-wrapper">
+                      <p id="option-title">
+                        <p id="option-number-text">{option.id}</p>:{" "}
+                        {option.title}
+                      </p>
+                      {option.voters && (
+                        <p id="option-vote-count">
+                          <p id="total-votes-text">Total Votes:</p>{" "}
+                          {option.voters.length}
                         </p>
-                        {option.voters && (
-                          <p id="option-vote-count">
-                            <p id="total-votes-text">Total Votes:</p>{" "}
-                            {option.voters.length}
-                          </p>
-                        )}
+                      )}
                     </div>
                   );
                 })}
 
-                <div id="vote-buttons-wrapper"> 
+              <div id="vote-buttons-wrapper">
                 {votingOptions &&
-                votingOptions.map(function (option) {
-                  return (
+                  votingOptions.map(function (option) {
+                    return (
                       <div id="vote-button-wrap">
                         <button
                           onClick={handleVote}
@@ -300,24 +299,11 @@ export default function VotingMessage(props) {
                           {option.id}
                         </button>
                       </div>
-                  );
-                })}
-                </div>
+                    );
+                  })}
+              </div>
             </Typography>
-          )}
-          {pressedUpdate && (
-            <div className="user-message__text-area">
-              <TextField
-                multiline
-                variant="filled"
-                rowsMax={4}
-                value={messageText}
-                onChange={(event) => {
-                  changeMessageText(event.target.value);
-                }}
-              />
-            </div>
-          )}
+          }
           {showForm && (
             <div className="user-message__text-area">
               <TextField
@@ -347,7 +333,7 @@ export default function VotingMessage(props) {
             <ul className="sendbird_dropdown_menu">
               {message.sender && message.sender.userId === userId && (
                 <div>
-                  {!pressedUpdate && !showForm && (
+                  {!showForm && (
                     <li
                       className="dropdown__menu-item"
                       onClick={renderQuestionForm}
@@ -355,6 +341,14 @@ export default function VotingMessage(props) {
                       <span className="dropdown__menu-item-text">
                         Change Task
                       </span>
+                    </li>
+                  )}
+                  {!showForm && (
+                    <li
+                      className="dropdown__menu-item"
+                      onClick={() => onDeleteMessage(message)}
+                    >
+                      <span className="dropdown__menu-item-text">Delete</span>
                     </li>
                   )}
                   {showForm && (
@@ -372,14 +366,6 @@ export default function VotingMessage(props) {
                       onClick={() => setShowForm(false)}
                     >
                       <span className="dropdown__menu-item-text">Cancel</span>
-                    </li>
-                  )}
-                  {!pressedUpdate && !showForm && (
-                    <li
-                      className="dropdown__menu-item"
-                      onClick={() => onDeleteMessage(message)}
-                    >
-                      <span className="dropdown__menu-item-text">Delete</span>
                     </li>
                   )}
                 </div>
