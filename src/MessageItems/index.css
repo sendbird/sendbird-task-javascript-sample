@@ -2,16 +2,6 @@
   position: relative;
 }
 
-.sendbird_dropdown_menu {
-  padding: 0px;
-  margin: 0px 22rem;
-  box-shadow: var(--sendbird-light-shadow-02);
-  background-color: var(--sendbird-light-background-50);
-  min-width: 140px;
-  padding: 8px 0px;
-  border-radius: 4px;
-  list-style: none;
-}
 
 .user-message__text-area {
   margin: 0px;
@@ -88,19 +78,46 @@
   margin-bottom: 0;
 }
 
-/* 
-#option-form{
-  border-bottom: 2px solid var(--sendbird-iconbutton-color);
-  border-top: 2px solid var(--sendbird-iconbutton-color);
-  padding-bottom: 20px;
-  padding-top: 20px;
-  width: 20rem;
-} */
-
 #vote-button-wrap {
   display: inline-block;
 }
 
 #vote-buttons-wrapper {
   margin-top: 10px;
+}
+
+.MuiPaper-root.MuiCard-root.MuiPaper-elevation1.MuiPaper-rounded {
+ position: relative;
+}
+.message-options-wrap{
+  margin: 0px;
+  padding: 5px;
+  border-radius: 4px;
+  position: absolute;
+  display: inline-block;
+  right: 6px;
+  top: 28px;
+}
+
+.sendbird_dropdown_menu{
+  width: 100px;
+  min-height: 40px;
+  padding: 5px;
+  background-color: var(--sendbird-light-background-50);
+  border: 2px solid  var(--sendbird-iconbutton-color);;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+/* if this input field is open, move the dropdown menu to below it */
+.voting-message .user-message__text-area {
+  bottom: 150px;
+  left: 0px;
+
+  position: relative;
+  display: inline-block;
+}
+
+.MuiInputBase-root.MuiFilledInput-root.MuiFilledInput-underline.MuiInputBase-formControl.MuiInputBase-multiline.MuiFilledInput-multiline{
+  width: 300px;
 }

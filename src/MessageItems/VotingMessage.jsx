@@ -371,37 +371,6 @@ export default function VotingMessage(props) {
                       </span>
                     </li>
                   )}
-                  {pressedUpdate && !showForm && (
-                    <li
-                      className="dropdown__menu-item"
-                      onClick={() =>
-                        onUpdateMessage(message.messageId, messageText)
-                      }
-                    >
-                      <span className="dropdown__menu-item-text">Save</span>
-                    </li>
-                  )}
-                  {pressedUpdate && (
-                    <li
-                      className="dropdown__menu-item"
-                      onClick={() => setPressedUpdate(false)}
-                      key={message.messageId}
-                    >
-                      <span className="dropdown__menu-item-text">Cancel</span>
-                    </li>
-                  )}
-
-                  {!pressedUpdate && !showForm && (
-                    <li
-                      className="dropdown__menu-item"
-                      onClick={() => {
-                        setPressedUpdate(true);
-                      }}
-                    >
-                      <span className="dropdown__menu-item-text">Edit</span>
-                    </li>
-                  )}
-
                   {showForm && (
                     <li
                       className="dropdown__menu-item"
