@@ -180,14 +180,12 @@ export default function VotingMessage(props) {
     setShowOptionsForm(false);
     var messageId = message.messageId;
     var currentUserId = parseInt(userId);
-
     var channelParams = new sdk.GroupChannelParams();
     var parsedChannelData = JSON.parse(currentChannel.data);
     var messageData = parsedChannelData[messageId];
     var votingOptions = messageData["voting_app_options"];
     console.log("options:", votingOptions.length);
     var optionNumber = votingOptions.length + 1;
-    //check current options.length & set id= to that +1
 
     var newOption = {
       id: optionNumber,
@@ -208,10 +206,13 @@ export default function VotingMessage(props) {
 
   var channelParsedData = JSON.parse(currentChannel.data);
   var suggestionMessage = channelParsedData[message.messageId];
-  var votingOptions =
-    suggestionMessage["voting_app_options"].length === 0
-      ? false
-      : suggestionMessage["voting_app_options"];
+  var votingOptions = false;
+  if (suggestionMessage["voting_app_options"]) {
+    votingOptions =
+      suggestionMessage["voting_app_options"].length === 0
+        ? false
+        : suggestionMessage["voting_app_options"];
+  }
 
   return (
     <div className="voting-message">
@@ -286,7 +287,6 @@ export default function VotingMessage(props) {
                     </div>
                   );
                 })}
-
               <div id="vote-buttons-wrapper">
                 {votingOptions &&
                   votingOptions.map(function (option) {

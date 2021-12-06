@@ -1,5 +1,5 @@
 import "./App.css";
-import React from "react";
+import React, {useState} from "react";
 import { SendBirdProvider } from "sendbird-uikit";
 import "sendbird-uikit/dist/index.css";
 import GroupChannel from "./GroupChannel";
@@ -18,7 +18,9 @@ export default function App() {
         nickname={NICKNAME}
         accessToken={ACCESS_TOKEN}
       >
-        <GroupChannel userId={USER_ID} />
+        <GroupChannel 
+        userId={USER_ID}
+         />
       </SendBirdProvider>
     </div>
   );

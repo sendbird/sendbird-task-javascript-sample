@@ -15,6 +15,7 @@ import pubSubFactory from "./UpdateComponents/ReducersComponents/pubSubIndex";
 import { LoggerFactory } from "./UpdateComponents/logger";
 import * as utils from "./UpdateComponents/ReducersComponents/utils";
 import useHandleChannelEvents from "./UpdateComponents/useHandleChannelEvents";
+import AddSuggestedTask from "./AddSuggestedTask";
 
 export default function UserMessage(props) {
   const {
@@ -38,7 +39,8 @@ export default function UserMessage(props) {
   };
 
   const renderQuestionForm = () => {
-    setShowForm(!showForm);
+    setShowForm(true);
+    setMessageOptions(!messageOptions);
   };
 
   const [messagesStore, messagesDispatcher] = useReducer(
@@ -127,7 +129,12 @@ export default function UserMessage(props) {
 
   //calls what onUpdateMessage is equal to
   const updateVotingMessage = useUpdateMessageCallback(
-    { currentChannel, messagesDispatcher, onBeforeUpdateUserMessage, updateLastMessage },
+    {
+      currentChannel,
+      messagesDispatcher,
+      onBeforeUpdateUserMessage,
+      updateLastMessage,
+    },
     { logger, sdk, pubSub }
   );
 
@@ -135,7 +142,7 @@ export default function UserMessage(props) {
     e.preventDefault();
     updateVotingMessage(message.messageId, messageText);
     setMessageOptions(!messageOptions);
-    changeMessageText('');
+    changeMessageText("");
     setShowForm(false);
   };
 
@@ -176,17 +183,12 @@ export default function UserMessage(props) {
             </div>
           )}
           {showForm && (
-            <div className="user-message__text-area">
-              <TextField
-                multiline
-                variant="filled"
-                rowsMax={4}
-                value={messageText}
-                onChange={(event) => {
-                  changeMessageText(event.target.value);
-                }}
-              />
-            </div>
+            <AddSuggestedTask
+              messageText={messageText}
+              changeMessageText={changeMessageText}
+              changeSuggestionSubmit={suggestionSubmit}
+              setShowForm={setShowForm}
+            />
           )}
         </CardContent>
         <button className="user-message__options-btn" onClick={clickedDropdown}>
@@ -206,12 +208,11 @@ export default function UserMessage(props) {
                 <div>
                   {!pressedUpdate && !showForm && (
                     <li
-                      className="dropdown__menu-item"
+                      id="suggest_task_button"
+                      className="suggest_task_button"
                       onClick={renderQuestionForm}
                     >
-                      <span className="dropdown__menu-item-text">
-                        Suggest Task
-                      </span>
+                      <span className="suggest_task_button">Suggest Task</span>
                     </li>
                   )}
                   {pressedUpdate && !showForm && (
@@ -241,24 +242,6 @@ export default function UserMessage(props) {
                       }}
                     >
                       <span className="dropdown__menu-item-text">Edit</span>
-                    </li>
-                  )}
-
-                  {showForm && (
-                    <li
-                      className="dropdown__menu-item"
-                      onClick={(e) => suggestionSubmit(e)}
-                    >
-                      <span className="dropdown__menu-item-text">Save</span>
-                    </li>
-                  )}
-
-                  {showForm && (
-                    <li
-                      className="dropdown__menu-item"
-                      onClick={() => setShowForm(false)}
-                    >
-                      <span className="dropdown__menu-item-text">Cancel</span>
                     </li>
                   )}
                   {!pressedUpdate && !showForm && (

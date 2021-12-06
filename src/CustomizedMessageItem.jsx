@@ -14,7 +14,7 @@ export default function CustomizedMessageItem(props) {
     userId,
     sdk,
     currentChannel,
-    updateLastMessage
+    updateLastMessage,
   } = props;
   console.log('msg received', message)
 

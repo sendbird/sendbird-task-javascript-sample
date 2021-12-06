@@ -28,6 +28,7 @@ function GroupChannel({ sdk, userId, updateLastMessage}) {
 
   return (
     <div className="channel-wrap">
+      
       <div className="channel-list">
         <ChannelList
           onChannelSelect={(channel) => {
