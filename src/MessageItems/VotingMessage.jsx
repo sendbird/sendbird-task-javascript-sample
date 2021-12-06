@@ -147,7 +147,8 @@ export default function VotingMessage(props) {
   };
 
   const renderQuestionForm = () => {
-    setShowForm(!showForm);
+    setShowForm(true);
+    setMessageOptions(!messageOptions);
   };
 
   const handleVote = (e) => {
@@ -179,21 +180,17 @@ export default function VotingMessage(props) {
     e.preventDefault();
     setShowOptionsForm(false);
     var messageId = message.messageId;
-    var currentUserId = parseInt(userId);
     var channelParams = new sdk.GroupChannelParams();
     var parsedChannelData = JSON.parse(currentChannel.data);
     var messageData = parsedChannelData[messageId];
     var votingOptions = messageData["voting_app_options"];
-    console.log("options:", votingOptions.length);
     var optionNumber = votingOptions.length + 1;
-
     var newOption = {
       id: optionNumber,
       title: optionsValue,
-      voters: [currentUserId],
+      voters: [],
       created_by: message._sender.nickname,
     };
-
     votingOptions.push(newOption);
     var channelDataString = JSON.stringify(parsedChannelData);
     channelParams.data = channelDataString;
