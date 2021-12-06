@@ -46,7 +46,8 @@
 #delete-btn,
 #vote-btn,
 #option-submit-btn,
-#option-cancel-btn {
+#option-cancel-btn, 
+#add_suggested_task_save_btn{
   border-radius: 5px;
   border: 1px solid #6210cc;
   padding: 3px 6px;
@@ -113,12 +114,10 @@
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   line-height: 1.43;
   letter-spacing: 0.01071em;
-
   color: white;
   background-color: #6210cc;
 }
 
-/* if this input field is open, move the dropdown menu to below it */
 .voting-message .user-message__text-area {
   bottom: 150px;
   left: 0px;
@@ -140,8 +139,8 @@
 }
 
 .modal-content {
-  width: 500px;
-  height: 300px;
+  width: 300px;
+  height: 200px;
   background-color: white;
   border-radius: 4px;
   text-align: center;
@@ -149,8 +148,8 @@
   position: absolute;
 }
 
-input {
-  width: 50%;
+#suggestion_form_input {
+  width: 80%;
   display: block;
   margin: 0 auto;
 }
@@ -162,4 +161,12 @@ input {
  font-size: 42px;
  transform: rotate(45deg);
  cursor: pointer;
+}
+
+#add_suggested_task_save_btn{
+  margin-top: 15px;
+}
+
+#suggestion-task-form-title{
+  padding-top: 30px;
 }
