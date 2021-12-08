@@ -81,6 +81,45 @@ export default function VotingMessage(props) {
     });
   };
 
+  const setMessageInChannelParams = () => {
+    var channelParams = new sdk.GroupChannelParams();
+    var messageId = message.messageId;
+    var channelDataString = "";
+    if (currentChannel.data) {
+      var parsedChannelData = JSON.parse(currentChannel.data);
+      parsedChannelData[`${messageId}`] = {
+        voting_app_options: [
+          {
+            id: 1,
+            title: optionsValue,
+            voters: [],
+            created_by: message._sender.nickname,
+          }
+        ],
+      };
+
+      channelDataString = JSON.stringify(parsedChannelData);
+    } else {
+      var newChannelData = {};
+      newChannelData[`${messageId}`] = {
+        voting_app_options: [
+          {
+            id: 1,
+            title: optionsValue,
+            voters: [],
+            created_by: message._sender.nickname,
+          }
+        ],
+      };
+      channelDataString = JSON.stringify(newChannelData);
+    }
+    channelParams.data = channelDataString;
+    currentChannel.updateChannel(channelParams, (err, channel) => {
+      var parsedChannelData = JSON.parse(channelParams.data);
+      console.log("updatedChannelParamsData new=", parsedChannelData);
+    });
+  };
+
   const handleOptionsSubmit = (e) => {
     e.preventDefault();
     setShowOptionsForm(false);
@@ -88,33 +127,32 @@ export default function VotingMessage(props) {
     var channelParams = new sdk.GroupChannelParams();
     var parsedChannelData = JSON.parse(currentChannel.data);
     var messageData = parsedChannelData[messageId];
-    var votingOptions = messageData["voting_app_options"];
-    var optionNumber = votingOptions.length + 1;
-    var newOption = {
-      id: optionNumber,
-      title: optionsValue,
-      voters: [],
-      created_by: message._sender.nickname,
-    };
-    votingOptions.push(newOption);
-    var channelDataString = JSON.stringify(parsedChannelData);
-    channelParams.data = channelDataString;
-    currentChannel.updateChannel(channelParams, (err, channel) => {
-      var parsedChannelData = JSON.parse(channelParams.data);
-      console.log("updatedChannelParamsData set=", parsedChannelData);
-    });
+
+    if(!parsedChannelData[messageId]){
+      setMessageInChannelParams();
+    } else {
+      var votingOptions = messageData["voting_app_options"];
+      var optionNumber = votingOptions.length + 1;
+      var newOption = {
+        id: optionNumber,
+        title: optionsValue,
+        voters: [],
+        created_by: message._sender.nickname,
+      };
+      votingOptions.push(newOption);
+      var channelDataString = JSON.stringify(parsedChannelData);
+      channelParams.data = channelDataString;
+      currentChannel.updateChannel(channelParams, (err, channel) => {
+        var parsedChannelData = JSON.parse(channelParams.data);
+        console.log("updatedChannelParamsData set=", parsedChannelData);
+      });
+    }
     setOptionsValue("");
   };
 
   var channelParsedData = JSON.parse(currentChannel.data);
-  var suggestionMessage = channelParsedData[message.messageId];
-  var votingOptions = false;
-  if (suggestionMessage["voting_app_options"] !== undefined) {
-    votingOptions =
-      suggestionMessage["voting_app_options"].length === 0
-        ? false
-        : suggestionMessage["voting_app_options"];
-  }
+  var suggestionMessage = channelParsedData[message.messageId];  
+  var votingOptions = (suggestionMessage === undefined) || ( Object.keys(suggestionMessage).length === 0)  ? false :  suggestionMessage["voting_app_options"];
 
   return (
     <div className="voting-message">

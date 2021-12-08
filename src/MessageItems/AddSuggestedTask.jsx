@@ -11,7 +11,7 @@ export default function AddSuggestedTask({
     <div className="bg-modal" style={{'display': 'flex'}}>
       <div className="modal-content">
         <div className="add_suggested_task_close_btn"   onClick={() => setShowForm(false)} >+</div>
-        <h3 id="suggestion-task-form-title">Change Suggestion Task</h3>
+        <h3 id="suggestion-task-form-title">Suggestion Task:</h3>
         <form onSubmit={(e) => {changeSuggestionSubmit(e)}}>
           <input
             type="text"

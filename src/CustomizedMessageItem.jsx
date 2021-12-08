@@ -16,6 +16,7 @@ export default function CustomizedMessageItem(props) {
     currentChannel,
     updateLastMessage,
   } = props;
+  
   console.log('msg received', message)
 
   const MessageHOC = useMemo(() => {

@@ -9,11 +9,15 @@ import {
 import "./index.css";
 import "sendbird-uikit/dist/index.css";
 import CustomizedMessageItem from "./CustomizedMessageItem";
+import AddSuggestedTask from "./MessageItems/AddSuggestedTask";
 
-function GroupChannel({ sdk, userId, updateLastMessage}) {
+function GroupChannel({ sdk, userId, updateLastMessage }) {
   const [showSettings, setShowSettings] = useState(false);
   const [currentChannel, setCurrentChannel] = useState(null);
   const currentChannelUrl = currentChannel ? currentChannel.url : "";
+  const [messageText, changeMessageText] = useState("");
+  const [showForm, setShowForm] = useState(false);
+
   var channelChatDiv = document.getElementsByClassName("channel-chat")[0];
 
   const renderSettingsBar = () => {
@@ -26,9 +30,40 @@ function GroupChannel({ sdk, userId, updateLastMessage}) {
     channelChatDiv.style.cssFloat = "right";
   };
 
+  const handleSendUserMessage = (text) => {
+    const userMessageParams = new sdk.UserMessageParams();
+    var inputText = text;
+    if (text.startsWith("/task")) {
+      setShowForm(true);
+
+      // updateChannelParams();
+      var inputText = text.slice(5)
+        console.log('inputText',inputText)
+    
+      var jsonMessageData = {
+        type: "VOTING_APP",
+        version: 1,
+        title: `${inputText}`,
+      };
+      var jsonString = JSON.stringify(jsonMessageData);
+      userMessageParams.data = jsonString;
+      userMessageParams.customType = "VOTING_APP";
+    }
+    userMessageParams.message = inputText;
+    return userMessageParams;
+  };
+
+
   return (
     <div className="channel-wrap">
-      
+      {/* {showForm && (
+        <AddSuggestedTask
+          messageText={messageText}
+          changeMessageText={changeMessageText}
+          changeSuggestionSubmit={suggestionSubmit}
+          setShowForm={setShowForm}
+        />
+      )} */}
       <div className="channel-list">
         <ChannelList
           onChannelSelect={(channel) => {
@@ -43,7 +78,7 @@ function GroupChannel({ sdk, userId, updateLastMessage}) {
             setShowSettings(!showSettings);
             renderSettingsBar();
           }}
-          // onBeforeSendUserMessage={handleSendUserMessage}
+          onBeforeSendUserMessage={handleSendUserMessage}
           renderChatItem={({
             message,
             onDeleteMessage,
@@ -82,6 +117,6 @@ export default withSendBird(GroupChannel, (store) => {
   return {
     sdk: sendBirdSelectors.getSdk(store),
     user: store.stores.userStore.user,
-    updateLastMessage: sendBirdSelectors.getUpdateUserMessage(store)
+    updateLastMessage: sendBirdSelectors.getUpdateUserMessage(store),
   };
 });
