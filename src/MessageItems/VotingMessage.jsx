@@ -38,10 +38,10 @@ export default function VotingMessage(props) {
       params.message = txt;
       return params;
     };
-    const params = createParams(messageText)
+    const params = createParams(messageText);
     currentChannel.updateUserMessage(message.messageId, params, (r, e) => {
       updateLastMessage(currentChannel.url, message.messageId, params);
-    })
+    });
     setMessageOptions(!messageOptions);
     changeMessageText("");
     setShowForm(false);
@@ -192,12 +192,19 @@ export default function VotingMessage(props) {
               <div id="vote-buttons-wrapper">
                 {votingOptions &&
                   votingOptions.map(function (option) {
+                    var style = {};
+                    if (option.voters.includes(parseInt(userId))) {
+                      style = { backgroundColor: "white", color: "#6210cc" };
+                    } else {
+                      style = { backgroundColor: "#6210cc", color: "white" };
+                    }
                     return (
                       <div id="vote-button-wrap">
                         <button
                           onClick={handleVote}
                           data-option={option.title}
                           id="vote-btn"
+                          style={style}
                         >
                           {option.id}
                         </button>
