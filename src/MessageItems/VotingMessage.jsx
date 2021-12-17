@@ -97,7 +97,6 @@ export default function VotingMessage(props) {
           }
         ],
       };
-
       channelDataString = JSON.stringify(parsedChannelData);
     } else {
       var newChannelData = {};

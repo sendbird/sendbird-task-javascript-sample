@@ -16,8 +16,6 @@ export default function CustomizedMessageItem(props) {
     currentChannel,
     updateLastMessage,
   } = props;
-  
-  console.log('msg received', message)
 
   const MessageHOC = useMemo(() => {
     if (message.isAdminMessage && message.isAdminMessage()) {
@@ -66,6 +64,7 @@ export default function CustomizedMessageItem(props) {
     onUpdateMessage,
     sdk,
     currentChannel,
+    updateLastMessage
   ]);
 
   return (

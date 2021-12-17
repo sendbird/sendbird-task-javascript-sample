@@ -1,5 +1,5 @@
 import "./App.css";
-import React, {useState} from "react";
+import React from "react";
 import { SendBirdProvider } from "sendbird-uikit";
 import "sendbird-uikit/dist/index.css";
 import GroupChannel from "./GroupChannel";

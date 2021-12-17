@@ -212,7 +212,7 @@ export default function UserMessage(props) {
                       className="suggest_task_button"
                       onClick={renderQuestionForm}
                     >
-                      <span className="suggest_task_button">Suggest Task</span>
+                      <span className="suggest_task_button">Suggest a Task</span>
                     </li>
                   )}
                   {pressedUpdate && !showForm && (

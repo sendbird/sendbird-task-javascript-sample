@@ -9,14 +9,12 @@ import {
 import "./index.css";
 import "sendbird-uikit/dist/index.css";
 import CustomizedMessageItem from "./CustomizedMessageItem";
-import AddSuggestedTask from "./MessageItems/AddSuggestedTask";
+import CustomizedMessageInput from "./CustomizedMessageInput";
 
 function GroupChannel({ sdk, userId, updateLastMessage }) {
   const [showSettings, setShowSettings] = useState(false);
   const [currentChannel, setCurrentChannel] = useState(null);
   const currentChannelUrl = currentChannel ? currentChannel.url : "";
-  const [messageText, changeMessageText] = useState("");
-  const [showForm, setShowForm] = useState(false);
 
   var channelChatDiv = document.getElementsByClassName("channel-chat")[0];
 
@@ -34,12 +32,9 @@ function GroupChannel({ sdk, userId, updateLastMessage }) {
     const userMessageParams = new sdk.UserMessageParams();
     var inputText = text;
     if (text.startsWith("/task")) {
-      setShowForm(true);
+      var inputText = text.slice(5);
+      console.log("inputText", inputText);
 
-      // updateChannelParams();
-      var inputText = text.slice(5)
-        console.log('inputText',inputText)
-    
       var jsonMessageData = {
         type: "VOTING_APP",
         version: 1,
@@ -53,17 +48,8 @@ function GroupChannel({ sdk, userId, updateLastMessage }) {
     return userMessageParams;
   };
 
-
   return (
     <div className="channel-wrap">
-      {/* {showForm && (
-        <AddSuggestedTask
-          messageText={messageText}
-          changeMessageText={changeMessageText}
-          changeSuggestionSubmit={suggestionSubmit}
-          setShowForm={setShowForm}
-        />
-      )} */}
       <div className="channel-list">
         <ChannelList
           onChannelSelect={(channel) => {
@@ -96,6 +82,15 @@ function GroupChannel({ sdk, userId, updateLastMessage }) {
               updateLastMessage={updateLastMessage}
             />
           )}
+          
+          renderMessageInput={({ channel, user, disabled }) => (
+            <CustomizedMessageInput
+              channel={channel}
+              user={user}
+              disabled={disabled}
+            />
+          )}
+
         />
       </div>
       {showSettings && (
