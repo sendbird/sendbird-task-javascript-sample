@@ -28,26 +28,6 @@ function GroupChannel({ sdk, userId, updateLastMessage }) {
     channelChatDiv.style.cssFloat = "right";
   };
 
-  const handleSendUserMessage = (text) => {
-    const userMessageParams = new sdk.UserMessageParams();
-    var inputText = text;
-    if (text.startsWith("/task")) {
-      var inputText = text.slice(5);
-      console.log("inputText", inputText);
-
-      var jsonMessageData = {
-        type: "VOTING_APP",
-        version: 1,
-        title: `${inputText}`,
-      };
-      var jsonString = JSON.stringify(jsonMessageData);
-      userMessageParams.data = jsonString;
-      userMessageParams.customType = "VOTING_APP";
-    }
-    userMessageParams.message = inputText;
-    return userMessageParams;
-  };
-
   return (
     <div className="channel-wrap">
       <div className="channel-list">
@@ -64,7 +44,6 @@ function GroupChannel({ sdk, userId, updateLastMessage }) {
             setShowSettings(!showSettings);
             renderSettingsBar();
           }}
-          onBeforeSendUserMessage={handleSendUserMessage}
           renderChatItem={({
             message,
             onDeleteMessage,
