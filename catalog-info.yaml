@@ -1,0 +1,13 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: sendbird-task-javascript-sample
+description: This project was bootstrapped with Create React App.
+annotations:
+    github.com/project-slug: sendbird/sendbird-task-javascript-sample
+spec:
+  type: library
+  lifecycle: production
+  owner: dep-developer-experience
+  system: sendbird-uikit
+
