@@ -71,6 +71,7 @@ export default function useUpdateMessageCallback(
       pubSub,
       sdk,
       currentChannel,
+      updateLastMessage,
     ]
   );
 }
