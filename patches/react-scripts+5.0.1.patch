@@ -7,10 +7,13 @@ index 522a81b..3fe02d1 100644
      },
  
 -    https: getHttpsConfig(),
-+    server: {
-+      type: getHttpsConfig() ? 'https' : 'http',
-+      options: getHttpsConfig() || {},
-+    },
++    server: (() => {
++      const httpsConfig = getHttpsConfig();
++      return {
++        type: httpsConfig ? 'https' : 'http',
++        options: typeof httpsConfig === 'object' ? httpsConfig : {},
++      };
++    })(),
      host,
      historyApiFallback: {
        // Paths with dots should still use the history fallback.
