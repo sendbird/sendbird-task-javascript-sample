@@ -1,4 +1,4 @@
-export default () => {
+const createPubSub = () => {
     const topics = {};
     const hOP = topics.hasOwnProperty;
   
@@ -29,3 +29,5 @@ export default () => {
       },
     };
   };
+
+export default createPubSub;

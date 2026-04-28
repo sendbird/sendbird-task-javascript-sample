@@ -1,4 +1,4 @@
-export default {
+const initialState = {
     initialized: false,
     loading: false,
     allMessages: [],
@@ -18,3 +18,5 @@ export default {
     isInvalid: false,
     messageListParams: null,
   };
+
+export default initialState;
